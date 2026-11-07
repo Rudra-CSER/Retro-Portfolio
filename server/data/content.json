@@ -1,0 +1,523 @@
+{
+  "meta": {
+    "title": "Rudra Narayan Mondal — Software Engineer · ML for Biology",
+    "description": "Software engineer at CRTDH Lab, IIT Kharagpur. Machine learning for biological data, biomarker quantification for point-of-care devices, and full-stack MERN apps."
+  },
+  "person": {
+    "name": "Rudra Narayan Mondal",
+    "shortName": "Rudra",
+    "logotype": "RUDRA",
+    "initials": "RNM",
+    "role": "Software Engineer",
+    "org": "CRTDH Lab, IIT Kharagpur",
+    "location": "Kharagpur, India",
+    "origin": "Berhampore, West Bengal",
+    "coords": "22.31°N · 87.31°E",
+    "timezone": "Asia/Kolkata",
+    "availability": "AVAILABLE FOR WORK",
+    "email": "",
+    "domain": "",
+    "links": {
+      "github": "https://github.com/Rudra-CSER",
+      "linkedin": "",
+      "x": "",
+      "resume": "/resume.pdf"
+    }
+  },
+  "hero": {
+    "lines": [
+      "TEACHING MACHINES",
+      "TO READ BIOLOGY,"
+    ],
+    "linesMobile": [
+      "TEACHING",
+      "MACHINES TO",
+      "READ BIOLOGY,"
+    ],
+    "italic": "from pixels to proteins.",
+    "cycleLabel": "SOFTWARE",
+    "cycle": [
+      "engineer.",
+      "researcher.",
+      "builder.",
+      "player one."
+    ]
+  },
+  "about": {
+    "label": "PLAYER BIO",
+    "paragraph": "I'm Rudra — a software engineer at CRTDH Lab, IIT Kharagpur, and an MS (research) scholar in nanoscience. I build machine-learning models for biological data, and the algorithms that turn point-of-care device images into biomarker readings. I came up through the MERN stack shipping full-stack apps, then followed my curiosity into diagnostics, edge AI and computational drug discovery.",
+    "accent": "Science that ships.",
+    "caption": "SOFTWARE ENGINEER · IIT KHARAGPUR, INDIA.",
+    "tagline": "From bench to browser.",
+    "short": "I'm Rudra, a software engineer at CRTDH Lab, IIT Kharagpur, and an MS (research) scholar. I build machine-learning models for biological data, and the algorithms that turn point-of-care images into biomarker readings. MERN by trade, scientist by curiosity."
+  },
+  "player": {
+    "stats": [
+      {
+        "k": "CLASS",
+        "v": "ENGINEER / RESEARCHER"
+      },
+      {
+        "k": "BASE",
+        "v": "IIT KHARAGPUR"
+      },
+      {
+        "k": "ORIGIN",
+        "v": "BERHAMPORE, WB"
+      },
+      {
+        "k": "SPECIAL",
+        "v": "ML × BIOLOGY"
+      }
+    ]
+  },
+  "abilities": [
+    {
+      "left": "FULL-STACK",
+      "right": "Apps people actually use.",
+      "detail": "MongoDB · Express · React · Node"
+    },
+    {
+      "left": "MACHINE LEARNING",
+      "right": "Models for messy biology.",
+      "detail": "Python · neural networks · evaluation"
+    },
+    {
+      "left": "BIOMARKERS",
+      "right": "Pixels in, numbers out.",
+      "detail": "Colorimetric imaging · calibration · point-of-care"
+    },
+    {
+      "left": "DRUG DISCOVERY",
+      "right": "Molecules, computed.",
+      "detail": "Computational methods for early-stage discovery"
+    },
+    {
+      "left": "EDGE AI",
+      "right": "Intelligence that runs locally.",
+      "detail": "Raspberry Pi inference · local LLMs"
+    }
+  ],
+  "manual": {
+    "label": "PLAYER'S MANUAL · P.01",
+    "word": "RUDRA",
+    "pronunciation": "\\ ru·drə \\",
+    "pos": "NOUN",
+    "definition": "1. An engineer who *teaches machines to read biology*, ships software that real people depend on, and treats every layer — *from pixel to protein* — as his responsibility.",
+    "definition2": "2. (arcade slang) Player one. Known to respawn at 3 a.m. with a working build.",
+    "synonyms": "syn. BUILDER · RESEARCHER · DEBUGGER.",
+    "creditLead": "THIS ENTRY WAS WRITTEN BY",
+    "creditLink": "THE PLAYER HIMSELF"
+  },
+  "tools": [
+    "React",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "TypeScript",
+    "Python",
+    "Flask",
+    "PostgreSQL",
+    "Redis",
+    "Docker",
+    "Nginx",
+    "Raspberry Pi",
+    "Linux",
+    "C++",
+    "Gemini",
+    "Tailscale",
+    "Git"
+  ],
+  "stageSelect": {
+    "label": "STAGE SELECT",
+    "headline": "Precise enough for the lab,",
+    "italic": "simple enough for the field.",
+    "caption": "SELECTED QUESTS"
+  },
+  "projects": [
+    {
+      "slug": "setu",
+      "name": "SETU",
+      "category": "HEALTH-TECH · LIVE IN PRODUCTION",
+      "tags": [
+        "NODE",
+        "EXPRESS",
+        "MONGODB",
+        "REDIS",
+        "JWT"
+      ],
+      "title": "Dental care, at campus scale.",
+      "description": "I own the dental module of IIT Kharagpur's SETU platform — rebuilt as an independent microservice with Redis-backed sessions and role-based access for three clinical roles.",
+      "stat": "600+ PATIENTS SCREENED",
+      "status": "LIVE",
+      "highlights": [
+        "Re-implemented the dental module as an independent Node/Express + MongoDB microservice",
+        "JWT auth with Redis-backed sessions; role-based access across three clinical roles",
+        "Draft-07 JSON Schemas for dental annotation sessions, plus a COCO converter",
+        "Redis Pub/Sub integration and a questionnaire frontend on a mock async service layer"
+      ],
+      "liveUrl": "https://setu.iitkgp.ac.in",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "tooth",
+      "bg": "#0B1611"
+    },
+    {
+      "slug": "hb-drop",
+      "name": "POINT-OF-CARE HB",
+      "category": "RESEARCH · MACHINE LEARNING",
+      "tags": [
+        "PYTHON",
+        "COMPUTER VISION",
+        "ML"
+      ],
+      "title": "Hemoglobin, from a single drop.",
+      "description": "A machine-learning pipeline that estimates hemoglobin from colorimetric images of a single drop of capillary blood — built for point-of-care anemia screening.",
+      "stat": "MANUSCRIPT IN PREPARATION",
+      "status": "IN PREP",
+      "highlights": [
+        "Colorimetric camera imaging of capillary blood samples",
+        "Machine-learning analysis pipeline for hemoglobin estimation",
+        "I own the Methods, Results and Discussion",
+        "Manuscript in preparation"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "drop",
+      "bg": "#160B0E"
+    },
+    {
+      "slug": "chromaref",
+      "name": "CHROMAREF V2",
+      "category": "COMPUTER VISION · COLOR SCIENCE",
+      "tags": [
+        "BROWSER",
+        "LEAST SQUARES",
+        "CCM"
+      ],
+      "title": "Color you can measure.",
+      "description": "A browser-based color-calibration engine that fits a color-correction matrix by least squares, so cameras that disagree can be made to agree.",
+      "stat": "RUNS ENTIRELY IN THE BROWSER",
+      "status": "V2",
+      "highlights": [
+        "Color-correction matrix (CCM) solved by least squares",
+        "Fits measured patch colors to their reference values",
+        "No install — runs fully client-side"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "checker",
+      "bg": "#0C1020"
+    },
+    {
+      "slug": "oroscan",
+      "name": "OROSCAN",
+      "category": "EDGE COMPUTING · DENTAL IMAGING",
+      "tags": [
+        "RASPBERRY PI",
+        "FLASK",
+        "PYTHON"
+      ],
+      "title": "A dental imaging viewer, on a Pi.",
+      "description": "A Raspberry Pi–hosted Flask viewer for dental images, rewritten defensively with diagnostic endpoints so it keeps working away from the lab bench.",
+      "stat": "SELF-HOSTED ON A RASPBERRY PI",
+      "status": "EDGE",
+      "highlights": [
+        "Self-hosted on a Raspberry Pi",
+        "Defensive rewrite for resilience",
+        "Diagnostic endpoints for quick health checks"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "pi",
+      "bg": "#0E120E"
+    },
+    {
+      "slug": "crtdh-aio",
+      "name": "CRTDH-AIO",
+      "category": "AI SYSTEMS · AUTOMATION",
+      "tags": [
+        "LOCAL LLM",
+        "HERMES",
+        "TAILSCALE",
+        "UBUNTU"
+      ],
+      "title": "A WhatsApp assistant, no cloud bill.",
+      "description": "A WhatsApp bot running NousResearch's Hermes locally on the lab's all-in-one Ubuntu desktop — reachable over Tailscale, with zero recurring cost.",
+      "stat": "ZERO RECURRING COST",
+      "status": "IN BUILD",
+      "highlights": [
+        "Local LLM (Hermes) — no API spend",
+        "Remote access over Tailscale",
+        "Runs on existing lab hardware"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "chat",
+      "bg": "#091413"
+    },
+    {
+      "slug": "campus-food",
+      "name": "CAMPUS FOOD",
+      "category": "FULL-STACK · NON-PROFIT",
+      "tags": [
+        "NODE",
+        "EXPRESS",
+        "MONGODB",
+        "PWA"
+      ],
+      "title": "Campus food, zero commission.",
+      "description": "A non-profit food-ordering PWA for campus: a customer app for browsing and ordering, and a restaurant dashboard that gets live order notifications.",
+      "stat": "NO PAYMENTS · NO COMMISSION",
+      "status": "IN DEV",
+      "highlights": [
+        "Customer app plus a restaurant dashboard with order notifications",
+        "Search, filters and live order-status tracking",
+        "Restaurant login with menu editing",
+        "Campus-radius delivery with a one-restaurant cart"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "bowl",
+      "bg": "#15100A"
+    }
+  ],
+  "hallOfFame": [
+    {
+      "title": "SOFTWARE DEVELOPMENT ENGINEER",
+      "detail": "CRTDH LAB · IIT KHARAGPUR",
+      "score": "2026 →"
+    },
+    {
+      "title": "MS (RESEARCH), NANOSCIENCE",
+      "detail": "IIT KHARAGPUR · PROF. SUMAN CHAKRABORTY",
+      "score": "2026 →"
+    },
+    {
+      "title": "SETU — LIVE IN PRODUCTION",
+      "detail": "600+ PATIENTS SCREENED",
+      "score": "LIVE"
+    },
+    {
+      "title": "BEST CINEMATOGRAPHY / VISUALS",
+      "detail": "SHORT FILM 'FIFTH HEAD' · KALEIDOSCOPE 2026",
+      "score": "WON"
+    },
+    {
+      "title": "OFFICIAL SELECTION — 17TH IIUSFF",
+      "detail": "1,269 FILMS · 92 COUNTRIES",
+      "score": "2026"
+    },
+    {
+      "title": "ML RESEARCH INTERN",
+      "detail": "CRTDH LAB · ON-DEVICE ORAL-CANCER CLASSIFIER",
+      "score": "2026"
+    },
+    {
+      "title": "GOOGLE CLOUD CERTIFIED",
+      "detail": "AI APPS WITH GEMINI & IMAGEN",
+      "score": "CERT"
+    },
+    {
+      "title": "B.TECH, COMPUTER SCIENCE",
+      "detail": "TECHNO INDIA UNIVERSITY · FYP: ML × GLOBAL EDUCATION",
+      "score": "2026"
+    }
+  ],
+  "more": [
+    [
+      {
+        "label": "SETU",
+        "caption": "Dental platform · IIT Kharagpur",
+        "sprite": "tooth"
+      },
+      {
+        "label": "CHROMAREF",
+        "caption": "Color calibration engine",
+        "sprite": "checker"
+      },
+      {
+        "label": "OROSCAN",
+        "caption": "Dental imaging on a Pi",
+        "sprite": "pi"
+      },
+      {
+        "label": "SCLEP",
+        "caption": "Lab portal · Express, Postgres, React/TS",
+        "sprite": "flask"
+      },
+      {
+        "label": "NEXUS",
+        "caption": "Multi-agent AI aggregator",
+        "sprite": "nodes"
+      },
+      {
+        "label": "LAZYCV",
+        "caption": "GenAI resume parser · Zod",
+        "sprite": "doc"
+      },
+      {
+        "label": "ANDD STORE",
+        "caption": "Storefront with WhatsApp ordering",
+        "sprite": "bag"
+      },
+      {
+        "label": "CRTDH-AIO",
+        "caption": "Local-LLM WhatsApp bot",
+        "sprite": "chat"
+      }
+    ],
+    [
+      {
+        "label": "MERN",
+        "caption": "MongoDB · Express · React · Node",
+        "sprite": "gem"
+      },
+      {
+        "label": "PYTHON",
+        "caption": "ML pipelines & tooling",
+        "sprite": "gem"
+      },
+      {
+        "label": "COMPUTER VISION",
+        "caption": "Colorimetric & dental imaging",
+        "sprite": "eye"
+      },
+      {
+        "label": "REDIS",
+        "caption": "Sessions & Pub/Sub",
+        "sprite": "gem"
+      },
+      {
+        "label": "RASPBERRY PI",
+        "caption": "On-device inference",
+        "sprite": "pi"
+      },
+      {
+        "label": "LOCAL LLMS",
+        "caption": "Hermes · OpenRouter",
+        "sprite": "nodes"
+      },
+      {
+        "label": "DOCKER",
+        "caption": "Compose · Nginx · tunnels",
+        "sprite": "gem"
+      },
+      {
+        "label": "C++",
+        "caption": "DSA, one problem at a time",
+        "sprite": "gem"
+      }
+    ],
+    [
+      {
+        "label": "DRUG DISCOVERY",
+        "caption": "Molecules, computed",
+        "sprite": "molecule"
+      },
+      {
+        "label": "FIFTH HEAD",
+        "caption": "Short film · Best Cinematography, Kaleidoscope 2026",
+        "sprite": "film"
+      },
+      {
+        "label": "VIDEOGRAPHY",
+        "caption": "Behind the lens",
+        "sprite": "film"
+      },
+      {
+        "label": "DJ SETS",
+        "caption": "Off-hours frequency",
+        "sprite": "vinyl"
+      },
+      {
+        "label": "3D PRINTING",
+        "caption": "Bambu in the corner",
+        "sprite": "cube"
+      },
+      {
+        "label": "GEMINI",
+        "caption": "Google Cloud certified",
+        "sprite": "gem"
+      },
+      {
+        "label": "PIXEL CUP '96",
+        "caption": "Play the bonus stage ↓",
+        "sprite": "ball"
+      }
+    ]
+  ],
+  "contact": {
+    "label": "CONTACT",
+    "headline": "Let's build something,",
+    "italic": "worth a second player.",
+    "emailPlaceholder": "your@email.com",
+    "messagePlaceholder": "What are we building?"
+  },
+  "expertise": [
+    "Full-stack",
+    "Machine learning",
+    "Biomarkers",
+    "Computer vision",
+    "Drug discovery",
+    "Edge AI"
+  ],
+  "game": {
+    "title": "PIXEL CUP '96",
+    "tagline": "ninety seconds, no VAR.",
+    "home": {
+      "name": "RNM XI",
+      "short": "RNM",
+      "star": "RUDRA"
+    },
+    "away": {
+      "name": "DEADLINE FC",
+      "short": "DFC"
+    }
+  },
+  "mobile": {
+    "chapters": [
+      {
+        "id": "m-bio",
+        "label": "BIO",
+        "title": "PLAYER BIO",
+        "kicker": "From bench to browser."
+      },
+      {
+        "id": "m-skills",
+        "label": "SKILLS",
+        "title": "ABILITIES",
+        "kicker": "Five channels. Swipe to switch."
+      },
+      {
+        "id": "m-quests",
+        "label": "QUESTS",
+        "title": "QUESTS",
+        "kicker": "Precise enough for the lab, simple enough for the field."
+      },
+      {
+        "id": "m-fame",
+        "label": "FAME",
+        "title": "HALL OF FAME",
+        "kicker": "Experience, education and a few things worth a coin."
+      },
+      {
+        "id": "arcade",
+        "label": "PLAY",
+        "title": "BONUS STAGE",
+        "kicker": ""
+      },
+      {
+        "id": "continue",
+        "label": "CONTACT",
+        "title": "CONTINUE?",
+        "kicker": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+# systemd *user* service — the alternative to pm2.
+# Install (no sudo needed):
+#   mkdir -p ~/.config/systemd/user
+#   cp deploy/rudra-portfolio.service ~/.config/systemd/user/
+#   # edit WorkingDirectory + ExecStart below if your folder/node path differ
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now rudra-portfolio
+#   sudo loginctl enable-linger $USER    # keep it running when you're logged out
+# Logs: journalctl --user -u rudra-portfolio -f
+
+[Unit]
+Description=RUDRA.ROM portfolio (Express + React)
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Projects/rudra-portfolio
+ExecStart=/usr/bin/env node server/src/index.js
+Environment=NODE_ENV=production
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

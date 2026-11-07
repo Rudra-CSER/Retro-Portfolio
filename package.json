@@ -1,0 +1,24 @@
+{
+  "name": "rudra-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RUDRA.ROM — Rudra Narayan Mondal's arcade-editorial portfolio (MongoDB · Express · React · Node).",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c yellow,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "seed": "npm run seed -w server",
+    "messages": "npm run messages -w server",
+    "serve": "npm run build && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

@@ -1,0 +1,296 @@
+/* ── RUDRA.ROM design tokens ─────────────────────────────────────────────── */
+:root {
+  --bg-0: #050505;
+  --bg-1: #0a0a0a;
+  --bg-2: #111111;
+  --bg-3: #1a1a1a;
+  --line: #222222;
+  --text: #f2eee6;
+  --muted: #8c8981;
+  --dim: #4a4843;
+  --accent: #e9b250; /* coin gold, softened; used sparingly */
+  --p2: #ff3b5c; /* player-two red (also: hemoglobin) */
+  --cyan: #3de8ff;
+
+  --font-serif: 'Instrument Serif', 'Iowan Old Style', 'Times New Roman', serif;
+  --font-term: 'VT323', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-pixel: 'Silkscreen', ui-monospace, monospace;
+  --font-display: 'Jersey 10', 'VT323', ui-monospace, monospace;
+
+  --gutter: clamp(16px, 4.2vw, 64px);
+  --header-h: 76px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  color-scheme: dark;
+}
+
+/* Palettes (pause menu → PALETTE). All stay dark. */
+:root[data-palette='phosphor'] {
+  --accent: #39ff88;
+  --p2: #ff5f57;
+  --text: #e3ffe9;
+  --muted: #7fa38a;
+  --dim: #3f5a47;
+}
+:root[data-palette='cga'] {
+  --accent: #55ffff;
+  --p2: #ff55ff;
+  --text: #ffffff;
+  --muted: #a8a8a8;
+  --cyan: #ff55ff;
+}
+:root[data-palette='dmg'] {
+  --bg-0: #0b1d0b;
+  --bg-1: #0f240f;
+  --bg-2: #132b12;
+  --bg-3: #1e3a1c;
+  --line: #26451f;
+  --text: #c4de7a;
+  --muted: #7fa04a;
+  --dim: #4c6b2a;
+  --accent: #9bbc0f;
+  --p2: #e0f09a;
+  --cyan: #8bac0f;
+}
+
+/* ── reset ─────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--bg-0);
+  scrollbar-color: var(--dim) var(--bg-0);
+  scrollbar-width: thin;
+}
+html.is-locked {
+  overflow: hidden;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-1);
+  color: var(--text);
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  transition: background-color 0.4s;
+}
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+h1,
+h2,
+h3,
+p,
+ol,
+ul,
+dl,
+dd {
+  margin: 0;
+  padding: 0;
+}
+ol,
+ul {
+  list-style: none;
+}
+::selection {
+  background: var(--accent);
+  color: #050505;
+}
+:focus-visible {
+  outline: 2px dashed var(--accent);
+  outline-offset: 4px;
+}
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+html.has-cursor input,
+html.has-cursor textarea {
+  cursor: text !important;
+}
+
+/* ── helpers ───────────────────────────────────────────────────────────── */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: -60px;
+  z-index: 5000;
+  padding: 10px 14px;
+  background: var(--accent);
+  color: #050505;
+  font-family: var(--font-term);
+  font-size: 20px;
+}
+.skip-link:focus {
+  top: 12px;
+}
+.mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.mask-inner {
+  display: block;
+  will-change: transform;
+}
+.serif-i {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+.accent-i {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--accent);
+}
+.muted {
+  color: var(--muted);
+}
+.label {
+  font-family: var(--font-term);
+  font-size: 19px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1;
+}
+.label b {
+  color: var(--accent);
+  font-weight: 400;
+}
+.label-accent {
+  color: var(--accent);
+}
+.caps-label {
+  font-family: var(--font-term);
+  font-size: 19px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px 3px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+.section {
+  position: relative;
+  padding: clamp(96px, 15vh, 180px) var(--gutter);
+}
+.blink {
+  animation: blink 1.1s steps(2, jump-none) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── TALLPIX text ──────────────────────────────────────────────────────── */
+.pixeltext {
+  display: block;
+  color: var(--text);
+}
+.pixeltext svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.pixeltext rect {
+  fill: currentColor;
+}
+.pt-power rect {
+  opacity: 0;
+}
+.pt-power.is-static rect {
+  opacity: 1;
+}
+.pt-power.is-in rect {
+  animation: px-on 0.36s steps(3, jump-none) forwards;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes px-on {
+  0% {
+    opacity: 0;
+  }
+  34% {
+    opacity: 1;
+  }
+  67% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.pt-rise svg {
+  overflow: hidden;
+}
+.pt-rise .pt-ch {
+  transform-box: fill-box;
+  transform: translateY(120%);
+}
+.pt-rise.is-in .pt-ch {
+  transform: translateY(0);
+  transition: transform 0.9s var(--ease-out);
+  transition-delay: calc(var(--ci) * 90ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .pt-power rect,
+  .pt-rise .pt-ch {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
