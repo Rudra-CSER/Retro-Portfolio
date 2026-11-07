@@ -27,16 +27,19 @@ football game with a global leaderboard.
 scrolling, and Three.js for the hero helix and the TV picture. All content arrives in a single JSON
 request, and every section sits behind an error boundary, so one failure never blanks the page.
 
-**Server.** Node.js and Express 5, with no database. Everything the site says lives in a folder of
-JSON files that the server checks against a schema at startup and whenever they change, then serves
-as one response. The only data visitors create (leaderboard scores and a visitor count) is kept in
-small JSON files that are written atomically. Helmet sets a strict Content Security Policy, and the
-endpoints that write are rate-limited.
+**Server.** Everything the site says lives in a folder of JSON files, checked against a schema and
+served as one response. The site runs on Cloudflare: the React build is served as static files from
+the edge, the API runs as a Cloudflare Worker, and the only data visitors create (leaderboard scores
+and a visitor count) lives in Cloudflare D1. The same API also runs as a Node.js and Express 5 server,
+keeping that data in small JSON files written atomically. Both share one set of models and rules, send
+a strict Content Security Policy, and rate-limit the endpoints that write.
 
-**Quality.** API tests with Node's built-in test runner, and ESLint across client and server.
+**Quality.** API tests for both the Worker and the Express server with Node's built-in test runner,
+and ESLint across the whole project.
 
 ```
 client/        the React app: sections, phone chapters, intro renderer, game, audio
+cloudflare/    the Worker (API), its D1 storage, and the build that assembles the site
 server/
   data/        the site's content, as JSON
   src/         routes → controllers → services → models, plus middleware

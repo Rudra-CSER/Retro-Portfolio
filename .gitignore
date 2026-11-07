@@ -1,5 +1,7 @@
 node_modules/
 client/dist/
+build/
+.wrangler/
 server/storage/
 server/public/resume.pdf
 .env

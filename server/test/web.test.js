@@ -13,7 +13,10 @@ describe('the website', () => {
   after(() => site.stop());
 
   test('index.html gets its title and share tags from site.json', async () => {
-    const { meta } = await readData(site.dirs, 'site.json');
+    const data = await readData(site.dirs, 'site.json');
+    data.meta.siteUrl = ''; // the real site.json has the domain; start from "not decided yet"
+    await writeData(site.dirs, 'site.json', data);
+    const { meta } = data;
     const { status, text, headers } = await site.request('/');
     assert.equal(status, 200);
     assert.match(headers.get('content-type'), /text\/html/);

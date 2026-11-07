@@ -1,0 +1,26 @@
+// How the site runs on Cloudflare (everything here fits the free plan).
+//   build/cloudflare      the static site, served straight from Cloudflare's edge (npm run build:cloudflare)
+//   cloudflare/worker.js  the API under /api/*, the same routes as the Express server
+//   DB                    a D1 database for the PIXEL CUP leaderboard and the visitor counter
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Must match the Worker's name in the Cloudflare dashboard.
+  "name": "retro-portfolio",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./build/cloudflare",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "retro-portfolio",
+      // Cloudflare dashboard → Storage & databases → D1 → retro-portfolio → copy the database ID here.
+      "database_id": "074879af-be57-430e-8d0a-7153430e99b6"
+    }
+  ],
+  "observability": { "enabled": true }
+}

@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
 export default [
-  { ignores: ['**/node_modules/', 'client/dist/', 'server/storage/'] },
+  { ignores: ['**/node_modules/', 'client/dist/', 'server/storage/', 'build/', '.wrangler/'] },
   js.configs.recommended,
   {
     rules: {
@@ -23,7 +23,7 @@ export default [
     rules: reactHooks.configs.recommended.rules,
   },
   {
-    files: ['client/vite.config.js', 'server/**/*.js', 'eslint.config.js'],
+    files: ['client/vite.config.js', 'server/**/*.js', 'cloudflare/**/*.js', 'eslint.config.js'],
     languageOptions: { globals: globals.node },
   },
   {

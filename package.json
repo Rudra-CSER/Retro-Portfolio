@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "RUDRA.ROM — Rudra Narayan Mondal's arcade-editorial portfolio. React + Express + Node; all content in JSON files, no database.",
+  "description": "RUDRA.ROM — Rudra Narayan Mondal's arcade-editorial portfolio. React + Express + Node, all content in JSON files; runs on Cloudflare Workers + D1.",
   "workspaces": [
     "client",
     "server"
@@ -13,8 +13,11 @@
     "build": "npm run build -w client",
     "start": "npm run start -w server",
     "serve": "npm run build && npm start",
+    "build:cloudflare": "npm run build && node cloudflare/build.js",
+    "cf:dev": "npm run build:cloudflare && wrangler dev",
+    "cf:deploy": "npm run build:cloudflare && wrangler deploy",
     "check": "npm run check -w server",
-    "test": "npm test -w server",
+    "test": "npm test -w server && node --disable-warning=ExperimentalWarning --test cloudflare/*.test.js",
     "lint": "eslint ."
   },
   "devDependencies": {
@@ -22,7 +25,8 @@
     "concurrently": "^9.2.1",
     "eslint": "^10.13.0",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "globals": "^17.0.0"
+    "globals": "^17.0.0",
+    "wrangler": "^4.158.0"
   },
   "engines": {
     "node": ">=20.19.0"
