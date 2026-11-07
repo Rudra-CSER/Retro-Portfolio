@@ -40,7 +40,7 @@ export default function Hero({ content, revealed, mobile = false }) {
       .then(({ createHeroScene }) => {
         if (disposed || !sceneBox.current) return;
         try {
-          scene.current = createHeroScene(sceneBox.current, { pixel: window.innerWidth < 720 ? 3 : 3 });
+          scene.current = createHeroScene(sceneBox.current, { pixel: 3 });
         } catch {
           setNoGL(true);
         }
@@ -85,7 +85,7 @@ export default function Hero({ content, revealed, mobile = false }) {
         },
       );
     },
-    { scope: root, dependencies: [revealed] }, // eslint-disable-line react-hooks/exhaustive-deps
+    { scope: root, dependencies: [revealed] },
   );
 
   return (

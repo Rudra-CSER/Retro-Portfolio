@@ -136,7 +136,6 @@ export default function PlayerArena({ content }) {
     current.current = -2;
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFs, n]);
 
   useEffect(() => {
@@ -254,7 +253,7 @@ export default function PlayerArena({ content }) {
           </div>
           <div>
             <dt>STACK</dt>
-            <dd>MONGODB · EXPRESS · REACT · NODE · PYTHON</dd>
+            <dd>{content.player.stack}</dd>
           </div>
           <div>
             <dt>CONTACT</dt>

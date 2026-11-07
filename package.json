@@ -1,8 +1,9 @@
 {
   "name": "rudra-portfolio",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "RUDRA.ROM — Rudra Narayan Mondal's arcade-editorial portfolio (MongoDB · Express · React · Node).",
+  "type": "module",
+  "description": "RUDRA.ROM — Rudra Narayan Mondal's arcade-editorial portfolio. React + Express + Node; all content in JSON files, no database.",
   "workspaces": [
     "client",
     "server"
@@ -11,12 +12,17 @@
     "dev": "concurrently -k -n api,web -c yellow,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
     "build": "npm run build -w client",
     "start": "npm run start -w server",
-    "seed": "npm run seed -w server",
-    "messages": "npm run messages -w server",
-    "serve": "npm run build && npm start"
+    "serve": "npm run build && npm start",
+    "check": "npm run check -w server",
+    "test": "npm test -w server",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.0.0"
   },
   "engines": {
     "node": ">=20.19.0"

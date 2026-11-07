@@ -8,6 +8,7 @@ export default function CRTOverlay() {
   useEffect(() => {
     const c = canvas.current;
     const ctx = c.getContext('2d', { alpha: true });
+    if (!ctx) return undefined; // no 2D canvas: keep the scanlines, skip the grain
     const W = 160;
     const H = 90;
     c.width = W;

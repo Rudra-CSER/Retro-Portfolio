@@ -29,12 +29,14 @@ const KITS = [
 const SKIN = ['#E8B48A', '#C68642', '#8D5524', '#F1C27D', '#B5774B', '#D9A066', '#7A4A2A', '#E0AC69'];
 const HAIR = ['#1B1B1B', '#3B2416', '#0E0E0E', '#6B4423', '#151515', '#2A1A10', '#0A0A0A', '#4A3020'];
 
-const LINES = {
+// Commentary. Team names come from site.json → game.
+const DEFAULT_TEAMS = { home: { name: 'RNM XI', short: 'RNM', star: 'RUDRA' }, away: { name: 'DEADLINE FC', short: 'DFC' } };
+const makeLines = ({ home, away }) => ({
   kickoff: ["AND WE'RE UNDERWAY AT THE PIXEL ARENA!", 'THE REF BLOWS - HERE WE GO!', 'KICK OFF! NINETY SECONDS ON THE CLOCK.'],
   shot: ['HE SHOOTS!', 'HAS A GO FROM THERE!', 'LETS FLY!', 'GOES FOR GOAL!'],
   save: ['WHAT A SAVE!', 'THE KEEPER GATHERS IT.', 'STRONG HANDS FROM THE KEEPER!', 'DENIED!'],
-  goal0: ['GOAL! WHAT A FINISH FROM RUDRA!', "IT'S IN! THE PIXEL ARENA ERUPTS!", 'GOAL! SCIENCE THAT SHIPS!', 'TOP BINS! ABSOLUTELY TOP BINS!'],
-  goal1: ['GOAL... DEADLINE FC STRIKE BACK.', 'THEY SCORE. THE DEADLINE LOOMS!', 'A GOAL FOR DEADLINE FC. SCOPE CREEP!'],
+  goal0: [`GOAL! WHAT A FINISH FROM ${home.star}!`, "IT'S IN! THE PIXEL ARENA ERUPTS!", 'GOAL! SCIENCE THAT SHIPS!', 'TOP BINS! ABSOLUTELY TOP BINS!'],
+  goal1: [`GOAL... ${away.name} STRIKE BACK.`, 'THEY SCORE. THE DEADLINE LOOMS!', `A GOAL FOR ${away.name}. SCOPE CREEP!`],
   wide: ['JUST WIDE!', 'OFF TARGET.', 'INCHES AWAY!'],
   over: ['OVER THE BAR!', 'BLAZED OVER!'],
   post: ['OFF THE POST!', 'CLANG! THE WOODWORK SAVES THEM.'],
@@ -42,8 +44,8 @@ const LINES = {
   throwin: ['THROW-IN.'],
   goalkick: ['GOAL KICK.'],
   fulltime: ["AND THAT'S FULL TIME!", 'THE REF CALLS TIME!'],
-  demo: ['DEMO MODE - PRESS START TO PLAY.', 'RNM XI VS DEADLINE FC.'],
-};
+  demo: ['DEMO MODE - PRESS START TO PLAY.', `${home.name} VS ${away.name}.`],
+});
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -86,9 +88,12 @@ function makeCrowd() {
   return cv;
 }
 
-export function createPixelCup(canvas, { onEvent = () => {}, sfx = {}, crowd = {}, matchSeconds = MATCH_SECONDS } = {}) {
+export function createPixelCup(canvas, { onEvent = () => {}, sfx = {}, crowd = {}, matchSeconds = MATCH_SECONDS, teams = DEFAULT_TEAMS } = {}) {
+  const TEAMS = { home: { ...DEFAULT_TEAMS.home, ...teams.home }, away: { ...DEFAULT_TEAMS.away, ...teams.away } };
+  const LINES = makeLines(TEAMS);
   const MATCH_LEN = Math.min(MATCH_SECONDS, Math.max(5, matchSeconds));
   const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D is not available');
   canvas.width = VW;
   canvas.height = VH;
   ctx.imageSmoothingEnabled = false;
@@ -135,7 +140,6 @@ export function createPixelCup(canvas, { onEvent = () => {}, sfx = {}, crowd = {
       });
     });
   }
-  const teamOf = (t) => players.filter((p) => p.team === t);
   const gkOf = (t) => players.find((p) => p.team === t && p.role === 'GK');
   const attackDir = (t) => (t === 0 ? 1 : -1);
 
@@ -1160,8 +1164,8 @@ export function createPixelCup(canvas, { onEvent = () => {}, sfx = {}, crowd = {
 
   function drawHUD() {
     // scoreboard
-    const left = 'RNM';
-    const right = 'DFC';
+    const left = TEAMS.home.short;
+    const right = TEAMS.away.short;
     const txt = `${S.score[0]}-${S.score[1]}`;
     const w = 6 + 3 + measureText(left) + 6 + measureText(txt) + 6 + measureText(right) + 6;
     ctx.fillStyle = 'rgba(0,0,0,0.78)';

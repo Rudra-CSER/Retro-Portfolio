@@ -64,6 +64,7 @@ export function noiseTile() {
   c.width = 96;
   c.height = 96;
   const ctx = c.getContext('2d');
+  if (!ctx) return '';
   const img = ctx.createImageData(96, 96);
   for (let i = 0; i < img.data.length; i += 4) {
     const v = (Math.random() * 255) | 0;

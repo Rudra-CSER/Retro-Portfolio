@@ -64,16 +64,16 @@ export default function Glimpse({ content }) {
           <b>(</b> MORE <b>)</b>
         </p>
         <h2 id="glimpse-title" className="glimpse-title gl-fade">
-          And that's <span className="serif-i muted">only level one.</span>
+          And that’s <span className="serif-i muted">only level one.</span>
         </h2>
       </div>
 
       <div className="glimpse-rows" onPointerLeave={() => setHover(null)}>
         {numbered.map((row, r) => (
           <Marquee key={r} speed={60 + r * 8} reverse={r % 2 === 1} velocity className="glimpse-row" label={r === 0 ? 'More projects' : undefined}>
-            {row.map((it) => (
+            {row.map((it, i) => (
               <span
-                key={it.label}
+                key={`${i}-${it.label}`}
                 className="gl-item"
                 onPointerEnter={() => setHover(it)}
                 onPointerLeave={() => setHover((h) => (h === it ? null : h))}

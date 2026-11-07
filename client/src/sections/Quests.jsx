@@ -156,7 +156,7 @@ export default function Quests({ content }) {
       tl.current = t;
       sfx.blip();
     },
-    [projects, n],
+    [projects],
   );
 
   useGSAP(

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { gsap, finePointer, prefersReduced } from './motion';
 
 export function useMedia(query) {
@@ -16,15 +16,16 @@ export function useMedia(query) {
 
 /** Live clock for a time zone, ticking every second. */
 export function useClock(timeZone = 'Asia/Kolkata') {
-  const fmt = useRef(
-    new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+  const fmt = useMemo(
+    () => new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+    [timeZone],
   );
-  const [now, setNow] = useState(() => fmt.current.format(new Date()));
+  const [now, setNow] = useState(() => new Date());
   useEffect(() => {
-    const id = setInterval(() => setNow(fmt.current.format(new Date())), 1000);
+    const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
-  return now;
+  return fmt.format(now);
 }
 
 /** Calls back once when the element scrolls into view. */

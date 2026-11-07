@@ -1442,52 +1442,30 @@
   line-height: 0.98;
   letter-spacing: -0.02em;
 }
-.cont-form {
+.cont-actions {
   margin-top: clamp(32px, 6vh, 60px);
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 14px 22px;
-  max-width: 760px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
 }
-.cont-form input,
-.cont-form textarea {
-  grid-column: 1 / -1;
-  width: 100%;
-  border: 0;
+.cont-copy {
+  font-family: var(--font-term);
+  font-size: 21px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
   border-bottom: 1px solid var(--dim);
-  background: transparent;
-  padding: 10px 0 12px;
-  font-family: var(--font-serif);
-  font-size: clamp(22px, 2.2vw, 32px);
+  padding: 4px 0 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.cont-copy:hover {
   color: var(--text);
-  border-radius: 0;
-  resize: none;
-  transition: border-color 0.2s;
-}
-.cont-form input::placeholder,
-.cont-form textarea::placeholder {
-  font-style: italic;
-  color: var(--dim);
-}
-.cont-form input:focus,
-.cont-form textarea:focus {
-  outline: none;
   border-color: var(--accent);
 }
-.cont-form .hp {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-}
 .send-pill {
-  grid-column: 1;
-  justify-self: start;
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  margin-top: 8px;
   padding: 8px 8px 8px 22px;
   background: var(--text);
   color: #050505;
@@ -1512,11 +1490,9 @@
   background: var(--accent);
   color: #050505;
 }
-.send-pill:disabled {
-  opacity: 0.6;
-}
 .cont-status {
-  grid-column: 1 / -1;
+  margin-top: 18px;
+  max-width: 760px;
   min-height: 1.4em;
   font-family: var(--font-term);
   font-size: 18px;
@@ -1547,15 +1523,27 @@
 .cont-email {
   display: grid;
   gap: 10px;
+  max-width: 100%;
   font-family: var(--font-display);
   font-size: clamp(24px, 2.4vw, 38px);
   letter-spacing: 0.04em;
+}
+.cont-email a {
+  overflow-wrap: anywhere;
+  transition: color 0.15s;
+}
+.cont-email a:hover {
+  color: var(--accent);
 }
 .cont-avail {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   justify-content: flex-end;
+  font-family: var(--font-term);
+  font-size: 19px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
 }
 .cont-avail .dot {
   width: 10px;

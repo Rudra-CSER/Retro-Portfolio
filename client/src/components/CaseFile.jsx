@@ -85,14 +85,14 @@ export default function CaseFile({ project, onClose }) {
               )}
               {p.highlights?.length > 0 && (
                 <ul className="cf-list cf-row">
-                  {p.highlights.map((h) => (
-                    <li key={h}>{h}</li>
+                  {p.highlights.map((h, i) => (
+                    <li key={`${i}-${h}`}>{h}</li>
                   ))}
                 </ul>
               )}
               <p className="cf-tags cf-row">
-                {p.tags.map((t) => (
-                  <span key={t} className="pill">
+                {p.tags.map((t, i) => (
+                  <span key={`${i}-${t}`} className="pill">
                     {t}
                   </span>
                 ))}

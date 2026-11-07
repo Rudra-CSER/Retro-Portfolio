@@ -1,0 +1,56 @@
+{
+  "abilities": [
+    {
+      "left": "FULL-STACK",
+      "right": "Apps people actually use.",
+      "detail": "MongoDB · Express · React · Node"
+    },
+    {
+      "left": "MACHINE LEARNING",
+      "right": "Models for messy biology.",
+      "detail": "Python · neural networks · evaluation"
+    },
+    {
+      "left": "BIOMARKERS",
+      "right": "Pixels in, numbers out.",
+      "detail": "Colorimetric imaging · calibration · point-of-care"
+    },
+    {
+      "left": "DRUG DISCOVERY",
+      "right": "Molecules, computed.",
+      "detail": "Computational methods for early-stage discovery"
+    },
+    {
+      "left": "EDGE AI",
+      "right": "Intelligence that runs locally.",
+      "detail": "Raspberry Pi inference · local LLMs"
+    }
+  ],
+  "tools": [
+    "React",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "TypeScript",
+    "Python",
+    "Flask",
+    "PostgreSQL",
+    "Redis",
+    "Docker",
+    "Nginx",
+    "Raspberry Pi",
+    "Linux",
+    "C++",
+    "Gemini",
+    "Tailscale",
+    "Git"
+  ],
+  "expertise": [
+    "Full-stack",
+    "Machine learning",
+    "Biomarkers",
+    "Computer vision",
+    "Drug discovery",
+    "Edge AI"
+  ]
+}

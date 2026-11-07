@@ -44,7 +44,7 @@ export default function MFame({ content, chapter, index, total }) {
     <MChapter id={chapter.id} index={index} total={total} title={chapter.title} kicker={chapter.kicker} stage="2-3" className="mch-fame">
       <ol className="mf-list" ref={list}>
         {rows.map((r, i) => (
-          <li key={r.title} className={`mf-row ${i < 3 ? `rank-${i + 1}` : ''} ${i >= TOP ? 'is-extra' : ''}`} hidden={i >= TOP && !all}>
+          <li key={`${i}-${r.title}`} className={`mf-row ${i < 3 ? `rank-${i + 1}` : ''} ${i >= TOP ? 'is-extra' : ''}`} hidden={i >= TOP && !all}>
             <span className="mf-rank">{RANK(i)}</span>
             <span className="mf-entry">
               <strong>{r.title}</strong>

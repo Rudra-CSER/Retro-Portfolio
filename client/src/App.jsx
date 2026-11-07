@@ -1,9 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { GameStateProvider, useActions } from './lib/state';
 import { initMotion, lockScroll, prefersReduced, ScrollTrigger, unlockScroll } from './lib/motion';
-import { bundledContent, fetchContent, fetchHealth } from './lib/api';
+import { useContent } from './lib/useContent';
+import { useOffline } from './lib/useOffline';
 import { sfx } from './lib/audio';
 import { useMedia } from './lib/hooks';
+import ErrorBoundary, { SectionCrash } from './components/ErrorBoundary';
+import LoadScreen from './components/LoadScreen';
+import NoSignal from './components/NoSignal';
 import CRTOverlay from './components/CRTOverlay';
 import Cursor from './components/Cursor';
 import Header from './components/Header';
@@ -29,35 +33,42 @@ import MFame from './mobile/MFame';
 
 const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 
-function Shell() {
-  const [content, setContent] = useState(bundledContent);
+// Section ids of the phone chapters, in page order. Their words live in site.json → mobile.chapters.
+const CHAPTER_IDS = ['m-bio', 'm-skills', 'm-quests', 'm-fame', 'arcade', 'continue'];
+
+/** If one section crashes, it shows a small error card and the rest of the page keeps working. */
+function Guard({ name, children }) {
+  return (
+    <ErrorBoundary name={name} fallback={<SectionCrash name={name} />}>
+      {children}
+    </ErrorBoundary>
+  );
+}
+
+function Shell({ content: c }) {
   const [boot, setBoot] = useState(prefersReduced ? 'done' : 'booting'); // booting → revealing → done
-  const [host, setHost] = useState(undefined);
-  const [resumeAvailable, setResumeAvailable] = useState(false);
   const headerLogo = useRef(null);
-  const bootRef = useRef(boot);
   const actions = useActions();
   // chapter mode: phones in portrait, and phones held sideways (too short for the desktop pins)
   const mobile = useMedia('(max-width: 720px), (pointer: coarse) and (max-height: 520px)');
-  bootRef.current = boot;
+  const chapters = useMemo(() => CHAPTER_IDS.map((id, i) => ({ id, ...c.mobile.chapters[i] })), [c]);
+  const T = chapters.length;
+  // connection lost while browsing: the NO SIGNAL screen until it's back (or the visitor waves it off)
+  const { offline, episode } = useOffline();
+  const [dismissedEpisode, setDismissedEpisode] = useState(0);
+  const showOffline = offline && dismissedEpisode !== episode;
+
+  useEffect(() => {
+    if (!showOffline) return undefined;
+    lockScroll('offline');
+    return () => unlockScroll('offline');
+  }, [showOffline]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('m-mode', mobile);
     const id = setTimeout(() => ScrollTrigger.refresh(), 120);
     return () => clearTimeout(id);
   }, [mobile]);
-
-  // content + host info (content only swaps in if it lands while the boot screen is up)
-  useEffect(() => {
-    fetchContent().then((data) => {
-      if (!data) return;
-      setResumeAvailable(!!data.resumeAvailable);
-      const { resumeAvailable: _r, ...rest } = data;
-      // server copy wins, but anything it lacks (e.g. an older seeded DB) falls back to the bundled copy
-      if (bootRef.current === 'booting' && JSON.stringify(rest) !== JSON.stringify(bundledContent)) setContent({ ...bundledContent, ...rest });
-    });
-    fetchHealth().then((h) => setHost(h ? h.host : null));
-  }, []);
 
   useEffect(() => {
     initMotion();
@@ -71,7 +82,8 @@ function Shell() {
       actions.enterStage('1-1');
       const refresh = () => ScrollTrigger.refresh();
       document.fonts?.ready.then(refresh);
-      setTimeout(refresh, 300);
+      const id = setTimeout(refresh, 300);
+      return () => clearTimeout(id);
     }
   }, [boot, actions]);
 
@@ -103,10 +115,7 @@ function Shell() {
     return () => document.removeEventListener('pointerover', over);
   }, []);
 
-  const c = content;
   const revealed = boot !== 'booting';
-  const chapters = c.mobile?.chapters?.length ? c.mobile.chapters : bundledContent.mobile.chapters;
-  const T = chapters.length;
 
   return (
     <>
@@ -118,43 +127,96 @@ function Shell() {
       {mobile ? <MobileNav chapters={chapters} /> : <CoinTab initial={c.person.shortName[0]} text={c.person.availability} />}
       <Toasts />
       {boot !== 'done' && (
-        <Boot logo={c.person.logotype} host={host} onReveal={() => setBoot('revealing')} onExit={() => setBoot('done')} />
+        // If the intro itself breaks, skip straight to the site.
+        <ErrorBoundary name="intro" onError={() => setBoot('done')}>
+          <Boot logo={c.person.logotype} servedFrom={c.boot.servedFrom} onReveal={() => setBoot('revealing')} onExit={() => setBoot('done')} />
+        </ErrorBoundary>
       )}
       <main id="main">
-        <Hero content={c} revealed={revealed} mobile={mobile} />
+        <Guard name="TITLE">
+          <Hero content={c} revealed={revealed} mobile={mobile} />
+        </Guard>
         {mobile ? (
           <>
-            <MBio content={c} chapter={chapters[0]} index={1} total={T} />
-            <MSkills content={c} chapter={chapters[1]} index={2} total={T} />
-            <MQuests content={c} chapter={chapters[2]} index={3} total={T} />
-            <MFame content={c} chapter={chapters[3]} index={4} total={T} />
-            <Arcade content={c} chapterNo={{ index: 5, total: T }} />
-            <Continue content={c} resumeAvailable={resumeAvailable} chapterNo={{ index: 6, total: T }} />
+            <Guard name="BIO">
+              <MBio content={c} chapter={chapters[0]} index={1} total={T} />
+            </Guard>
+            <Guard name="ABILITIES">
+              <MSkills content={c} chapter={chapters[1]} index={2} total={T} />
+            </Guard>
+            <Guard name="QUESTS">
+              <MQuests content={c} chapter={chapters[2]} index={3} total={T} />
+            </Guard>
+            <Guard name="HALL OF FAME">
+              <MFame content={c} chapter={chapters[3]} index={4} total={T} />
+            </Guard>
+            <Guard name="BONUS STAGE">
+              <Arcade content={c} chapterNo={{ index: 5, total: T }} />
+            </Guard>
+            <Guard name="CONTACT">
+              <Continue content={c} chapterNo={{ index: 6, total: T }} />
+            </Guard>
           </>
         ) : (
           <>
-            <About content={c} />
-            <PlayerArena content={c} />
-            <Manual content={c} />
-            <StageSelect content={c} />
-            <Quests content={c} />
-            <HallOfFame content={c} />
-            <Arcade content={c} />
-            <Glimpse content={c} />
-            <Continue content={c} resumeAvailable={resumeAvailable} />
+            <Guard name="BIO">
+              <About content={c} />
+            </Guard>
+            <Guard name="ABILITIES">
+              <PlayerArena content={c} />
+            </Guard>
+            <Guard name="MANUAL">
+              <Manual content={c} />
+            </Guard>
+            <Guard name="STAGE SELECT">
+              <StageSelect content={c} />
+            </Guard>
+            <Guard name="QUESTS">
+              <Quests content={c} />
+            </Guard>
+            <Guard name="HALL OF FAME">
+              <HallOfFame content={c} />
+            </Guard>
+            <Guard name="BONUS STAGE">
+              <Arcade content={c} />
+            </Guard>
+            <Guard name="MORE">
+              <Glimpse content={c} />
+            </Guard>
+            <Guard name="CONTACT">
+              <Continue content={c} />
+            </Guard>
           </>
         )}
       </main>
-      <CRTOverlay />
-      <Cursor />
+      {/* decorative layers: if they fail, the site simply goes without them */}
+      <ErrorBoundary name="crt overlay">
+        <CRTOverlay />
+      </ErrorBoundary>
+      <ErrorBoundary name="cursor">
+        <Cursor />
+      </ErrorBoundary>
+      {showOffline && (
+        <NoSignal
+          logo={c.person.logotype}
+          title="NO SIGNAL"
+          hint="YOU'RE OFFLINE · THIS CLEARS BY ITSELF WHEN YOU'RE BACK"
+          actionLabel="KEEP READING OFFLINE"
+          onAction={() => setDismissedEpisode(episode)}
+        />
+      )}
     </>
   );
 }
 
 export default function App() {
+  const { status, content, error, failures, slow, retry } = useContent();
+  if (status !== 'ready') return <LoadScreen status={status} slow={slow} failures={failures} message={error?.message} onRetry={retry} />;
   return (
-    <GameStateProvider>
-      <Shell />
-    </GameStateProvider>
+    <ErrorBoundary name="the site" fallback={<LoadScreen status="crash" message="The page hit a bug and stopped." />}>
+      <GameStateProvider>
+        <Shell content={content} />
+      </GameStateProvider>
+    </ErrorBoundary>
   );
 }

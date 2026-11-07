@@ -1,0 +1,278 @@
+{
+  "projects": [
+    {
+      "slug": "setu",
+      "name": "SETU",
+      "category": "HEALTH-TECH · LIVE IN PRODUCTION",
+      "tags": [
+        "NODE",
+        "EXPRESS",
+        "MONGODB",
+        "REDIS",
+        "JWT"
+      ],
+      "title": "Dental care, at campus scale.",
+      "description": "I own the dental module of IIT Kharagpur's SETU platform — rebuilt as an independent microservice with Redis-backed sessions and role-based access for three clinical roles.",
+      "stat": "600+ PATIENTS SCREENED",
+      "status": "LIVE",
+      "highlights": [
+        "Re-implemented the dental module as an independent Node/Express + MongoDB microservice",
+        "JWT auth with Redis-backed sessions; role-based access across three clinical roles",
+        "Draft-07 JSON Schemas for dental annotation sessions, plus a COCO converter",
+        "Redis Pub/Sub integration and a questionnaire frontend on a mock async service layer"
+      ],
+      "liveUrl": "https://setu.iitkgp.ac.in",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "tooth",
+      "bg": "#0B1611"
+    },
+    {
+      "slug": "hb-drop",
+      "name": "POINT-OF-CARE HB",
+      "category": "RESEARCH · MACHINE LEARNING",
+      "tags": [
+        "PYTHON",
+        "COMPUTER VISION",
+        "ML"
+      ],
+      "title": "Hemoglobin, from a single drop.",
+      "description": "A machine-learning pipeline that estimates hemoglobin from colorimetric images of a single drop of capillary blood — built for point-of-care anemia screening.",
+      "stat": "MANUSCRIPT IN PREPARATION",
+      "status": "IN PREP",
+      "highlights": [
+        "Colorimetric camera imaging of capillary blood samples",
+        "Machine-learning analysis pipeline for hemoglobin estimation",
+        "I own the Methods, Results and Discussion",
+        "Manuscript in preparation"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "drop",
+      "bg": "#160B0E"
+    },
+    {
+      "slug": "chromaref",
+      "name": "CHROMAREF V2",
+      "category": "COMPUTER VISION · COLOR SCIENCE",
+      "tags": [
+        "BROWSER",
+        "LEAST SQUARES",
+        "CCM"
+      ],
+      "title": "Color you can measure.",
+      "description": "A browser-based color-calibration engine that fits a color-correction matrix by least squares, so cameras that disagree can be made to agree.",
+      "stat": "RUNS ENTIRELY IN THE BROWSER",
+      "status": "V2",
+      "highlights": [
+        "Color-correction matrix (CCM) solved by least squares",
+        "Fits measured patch colors to their reference values",
+        "No install — runs fully client-side"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "checker",
+      "bg": "#0C1020"
+    },
+    {
+      "slug": "oroscan",
+      "name": "OROSCAN",
+      "category": "EDGE COMPUTING · DENTAL IMAGING",
+      "tags": [
+        "RASPBERRY PI",
+        "FLASK",
+        "PYTHON"
+      ],
+      "title": "A dental imaging viewer, on a Pi.",
+      "description": "A Raspberry Pi–hosted Flask viewer for dental images, rewritten defensively with diagnostic endpoints so it keeps working away from the lab bench.",
+      "stat": "SELF-HOSTED ON A RASPBERRY PI",
+      "status": "EDGE",
+      "highlights": [
+        "Self-hosted on a Raspberry Pi",
+        "Defensive rewrite for resilience",
+        "Diagnostic endpoints for quick health checks"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "pi",
+      "bg": "#0E120E"
+    },
+    {
+      "slug": "crtdh-aio",
+      "name": "CRTDH-AIO",
+      "category": "AI SYSTEMS · AUTOMATION",
+      "tags": [
+        "LOCAL LLM",
+        "HERMES",
+        "TAILSCALE",
+        "UBUNTU"
+      ],
+      "title": "A WhatsApp assistant, no cloud bill.",
+      "description": "A WhatsApp bot running NousResearch's Hermes locally on the lab's all-in-one Ubuntu desktop — reachable over Tailscale, with zero recurring cost.",
+      "stat": "ZERO RECURRING COST",
+      "status": "IN BUILD",
+      "highlights": [
+        "Local LLM (Hermes) — no API spend",
+        "Remote access over Tailscale",
+        "Runs on existing lab hardware"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "chat",
+      "bg": "#091413"
+    },
+    {
+      "slug": "campus-food",
+      "name": "CAMPUS FOOD",
+      "category": "FULL-STACK · NON-PROFIT",
+      "tags": [
+        "NODE",
+        "EXPRESS",
+        "MONGODB",
+        "PWA"
+      ],
+      "title": "Campus food, zero commission.",
+      "description": "A non-profit food-ordering PWA for campus: a customer app for browsing and ordering, and a restaurant dashboard that gets live order notifications.",
+      "stat": "NO PAYMENTS · NO COMMISSION",
+      "status": "IN DEV",
+      "highlights": [
+        "Customer app plus a restaurant dashboard with order notifications",
+        "Search, filters and live order-status tracking",
+        "Restaurant login with menu editing",
+        "Campus-radius delivery with a one-restaurant cart"
+      ],
+      "liveUrl": "",
+      "sourceUrl": "",
+      "image": "",
+      "sprite": "bowl",
+      "bg": "#15100A"
+    }
+  ],
+  "more": [
+    [
+      {
+        "label": "SETU",
+        "caption": "Dental platform · IIT Kharagpur",
+        "sprite": "tooth"
+      },
+      {
+        "label": "CHROMAREF",
+        "caption": "Color calibration engine",
+        "sprite": "checker"
+      },
+      {
+        "label": "OROSCAN",
+        "caption": "Dental imaging on a Pi",
+        "sprite": "pi"
+      },
+      {
+        "label": "SCLEP",
+        "caption": "Lab portal · Express, Postgres, React/TS",
+        "sprite": "flask"
+      },
+      {
+        "label": "NEXUS",
+        "caption": "Multi-agent AI aggregator",
+        "sprite": "nodes"
+      },
+      {
+        "label": "LAZYCV",
+        "caption": "GenAI resume parser · Zod",
+        "sprite": "doc"
+      },
+      {
+        "label": "ANDD STORE",
+        "caption": "Storefront with WhatsApp ordering",
+        "sprite": "bag"
+      },
+      {
+        "label": "CRTDH-AIO",
+        "caption": "Local-LLM WhatsApp bot",
+        "sprite": "chat"
+      }
+    ],
+    [
+      {
+        "label": "MERN",
+        "caption": "MongoDB · Express · React · Node",
+        "sprite": "gem"
+      },
+      {
+        "label": "PYTHON",
+        "caption": "ML pipelines & tooling",
+        "sprite": "gem"
+      },
+      {
+        "label": "COMPUTER VISION",
+        "caption": "Colorimetric & dental imaging",
+        "sprite": "eye"
+      },
+      {
+        "label": "REDIS",
+        "caption": "Sessions & Pub/Sub",
+        "sprite": "gem"
+      },
+      {
+        "label": "RASPBERRY PI",
+        "caption": "On-device inference",
+        "sprite": "pi"
+      },
+      {
+        "label": "LOCAL LLMS",
+        "caption": "Hermes · OpenRouter",
+        "sprite": "nodes"
+      },
+      {
+        "label": "DOCKER",
+        "caption": "Compose · Nginx · tunnels",
+        "sprite": "gem"
+      },
+      {
+        "label": "C++",
+        "caption": "DSA, one problem at a time",
+        "sprite": "gem"
+      }
+    ],
+    [
+      {
+        "label": "DRUG DISCOVERY",
+        "caption": "Molecules, computed",
+        "sprite": "molecule"
+      },
+      {
+        "label": "FIFTH HEAD",
+        "caption": "Short film · Best Cinematography, Kaleidoscope 2026",
+        "sprite": "film"
+      },
+      {
+        "label": "VIDEOGRAPHY",
+        "caption": "Behind the lens",
+        "sprite": "film"
+      },
+      {
+        "label": "DJ SETS",
+        "caption": "Off-hours frequency",
+        "sprite": "vinyl"
+      },
+      {
+        "label": "3D PRINTING",
+        "caption": "Bambu in the corner",
+        "sprite": "cube"
+      },
+      {
+        "label": "GEMINI",
+        "caption": "Google Cloud certified",
+        "sprite": "gem"
+      },
+      {
+        "label": "PIXEL CUP '96",
+        "caption": "Play the bonus stage ↓",
+        "sprite": "ball"
+      }
+    ]
+  ]
+}

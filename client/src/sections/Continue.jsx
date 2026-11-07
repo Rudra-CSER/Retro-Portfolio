@@ -3,7 +3,8 @@ import { useGSAP } from '@gsap/react';
 import PixelText from '../components/PixelText';
 import PixelStar from '../components/PixelStar';
 import { prefersReduced, ScrollTrigger, scrollToTarget, gsap } from '../lib/motion';
-import { registerVisit, sendMessage } from '../lib/api';
+import { registerVisit } from '../lib/api';
+import { copyText, selectText } from '../lib/clipboard';
 import { useMagnetic } from '../lib/hooks';
 import { useStage } from '../lib/useStage';
 import { useActions } from '../lib/state';
@@ -38,37 +39,40 @@ function MagLink({ href, children, external, onClick, className = '' }) {
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
-export default function Continue({ content, resumeAvailable, chapterNo = null }) {
+export default function Continue({ content, chapterNo = null }) {
   const root = useRef(null);
-  const sendBtn = useRef(null);
+  const mailBtn = useRef(null);
   const topBtn = useRef(null);
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [company, setCompany] = useState('');
+  const address = useRef(null);
   const [status, setStatus] = useState({ state: 'idle', text: '' });
   const [visits, setVisits] = useState(null);
   const { unlock } = useActions();
   const p = content.person;
   const c = content.contact;
-  useMagnetic(sendBtn, { strength: 0.3 });
+  const mailto = `mailto:${p.email}?subject=${encodeURIComponent(c.subject)}`;
+  useMagnetic(mailBtn, { strength: 0.3 });
   useMagnetic(topBtn, { strength: 0.4 });
   useStage(root, '4-1');
 
   useEffect(() => {
-    registerVisit().then(setVisits);
+    let current = true;
+    registerVisit().then((n) => current && setVisits(n));
+    return () => {
+      current = false;
+    };
   }, []);
 
   useGSAP(
     () => {
       if (!chapterNo || prefersReduced) return;
       chapterIntro(root.current, { title: null });
-      gsap.from(root.current.querySelectorAll('.cont-form > *:not(.hp), .cont-links li'), {
+      gsap.from(root.current.querySelectorAll('.cont-actions > *, .cont-links li'), {
         x: -24,
         autoAlpha: 0,
         stagger: 0.07,
         duration: 0.6,
         ease: 'power3.out',
-        scrollTrigger: { trigger: root.current.querySelector('.cont-form'), start: 'top 88%', once: true },
+        scrollTrigger: { trigger: root.current.querySelector('.cont-actions'), start: 'top 88%', once: true },
       });
     },
     { scope: root },
@@ -91,48 +95,30 @@ export default function Continue({ content, resumeAvailable, chapterNo = null })
     { scope: root },
   );
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (status.state === 'sending') return;
-    if (!/^\S+@\S+\.\S{2,}$/.test(email.trim())) {
-      setStatus({ state: 'error', text: 'THAT EMAIL LOOKS OFF — TRY AGAIN.' });
-      sfx.error();
-      return;
-    }
-    if (message.trim().length < 2) {
-      setStatus({ state: 'error', text: 'ADD A LINE ABOUT WHAT YOU HAVE IN MIND.' });
-      sfx.error();
-      return;
-    }
-    setStatus({ state: 'sending', text: 'TRANSMITTING…' });
-    try {
-      await sendMessage({ email: email.trim(), message: message.trim(), company });
-      setStatus({ state: 'ok', text: 'MESSAGE SAVED. PLAYER 2 HAS ENTERED THE GAME — EXPECT A REPLY SOON.' });
-      setEmail('');
-      setMessage('');
+  // The link itself opens the visitor's mail app; this only adds the coin sound and a hint.
+  const onEmail = () => {
+    sfx.coin();
+    unlock('contact');
+    setStatus({ state: 'ok', text: 'OPENING YOUR MAIL APP… NOTHING HAPPENED? COPY THE ADDRESS INSTEAD.' });
+  };
+
+  const onCopy = async () => {
+    if (await copyText(p.email)) {
       sfx.coin();
       unlock('contact');
-    } catch (err) {
-      if (err.offline) {
-        if (p.email) {
-          const body = encodeURIComponent(`${message}\n\n— ${email}`);
-          window.location.href = `mailto:${p.email}?subject=${encodeURIComponent('Hello from your portfolio')}&body=${body}`;
-          setStatus({ state: 'ok', text: 'OPENING YOUR MAIL APP…' });
-        } else {
-          setStatus({ state: 'error', text: 'PREVIEW BUILD — THE FORM GOES LIVE WHEN THE SERVER IS RUNNING.' });
-        }
-      } else {
-        setStatus({ state: 'error', text: (err.data?.fields ? Object.values(err.data.fields)[0] : err.message || 'SOMETHING WENT WRONG.').toUpperCase() });
-      }
+      setStatus({ state: 'ok', text: `COPIED ${p.email.toUpperCase()}. PLAYER 2, YOUR MOVE.` });
+    } else {
+      selectText(address.current);
       sfx.error();
+      setStatus({ state: 'error', text: 'YOUR BROWSER BLOCKED COPYING. THE ADDRESS IS SELECTED: PRESS CTRL+C (⌘C).' });
     }
   };
 
   const links = [
-    { label: 'GITHUB', href: p.links.github, external: true },
-    p.links.linkedin && { label: 'LINKEDIN', href: p.links.linkedin, external: true },
-    p.links.x && { label: 'X / TWITTER', href: p.links.x, external: true },
-    resumeAvailable && { label: 'RESUME', href: p.links.resume, external: true },
+    p.links.github && { label: 'GITHUB', href: p.links.github },
+    p.links.linkedin && { label: 'LINKEDIN', href: p.links.linkedin },
+    p.links.x && { label: 'X / TWITTER', href: p.links.x },
+    p.links.resume && { label: 'RESUME', href: p.links.resume },
   ].filter(Boolean);
 
   const go = (target) => (e) => {
@@ -167,76 +153,39 @@ export default function Continue({ content, resumeAvailable, chapterNo = null })
             </span>
           </h2>
 
-          <form className="cont-form" onSubmit={onSubmit} noValidate>
-            <label className="sr-only" htmlFor="cf-email">
-              Your email
-            </label>
-            <input
-              id="cf-email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder={c.emailPlaceholder}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <label className="sr-only" htmlFor="cf-msg">
-              Message
-            </label>
-            <textarea
-              id="cf-msg"
-              rows={2}
-              placeholder={c.messagePlaceholder}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              maxLength={4000}
-              required
-            />
-            <input
-              className="hp"
-              tabIndex={-1}
-              autoComplete="off"
-              aria-hidden="true"
-              name="company"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-            />
-            <button type="submit" className="send-pill" ref={sendBtn} disabled={status.state === 'sending'}>
-              {status.state === 'sending' ? 'SENDING' : 'SEND'}
+          <div className="cont-actions">
+            <a ref={mailBtn} className="send-pill" href={mailto} onClick={onEmail}>
+              {c.cta}
               <span className="send-arrow" aria-hidden="true">
                 ↗
               </span>
+            </a>
+            <button type="button" className="cont-copy" onClick={onCopy}>
+              COPY ADDRESS
             </button>
-            <p className={`cont-status is-${status.state}`} role="status" aria-live="polite">
-              {status.text}
-            </p>
-          </form>
+          </div>
+          <p className={`cont-status is-${status.state}`} role="status" aria-live="polite">
+            {status.text}
+          </p>
         </div>
 
         <div className="cont-right">
           <PixelStar className="cont-star" />
-          {p.email ? (
-            <p className="cont-email">
-              <span className="label">
-                <b>(</b> EMAIL <b>)</b>
-              </span>
-              <a href={`mailto:${p.email}`}>{p.email.toUpperCase()}</a>
-            </p>
-          ) : (
-            <p className="cont-email">
-              <span className="label">
-                <b>(</b> STATUS <b>)</b>
-              </span>
-              <span className="cont-avail">
-                <i className="dot" /> {p.availability}
-              </span>
-            </p>
-          )}
+          <p className="cont-email">
+            <span className="label">
+              <b>(</b> EMAIL <b>)</b>
+            </span>
+            <a ref={address} href={mailto} onClick={onEmail}>
+              {p.email}
+            </a>
+          </p>
+          <p className="cont-avail">
+            <i className="dot" aria-hidden="true" /> {p.availability}
+          </p>
           <ul className="cont-links">
             {links.map((l) => (
               <li key={l.label}>
-                <MagLink href={l.href} external={l.external}>
+                <MagLink href={l.href} external>
                   {l.label} <span aria-hidden="true">↗</span>
                 </MagLink>
               </li>
@@ -265,15 +214,15 @@ export default function Continue({ content, resumeAvailable, chapterNo = null })
         </p>
         <p>
           <span className="row-label">EXPERTISE</span>
-          {content.expertise.map((x) => (
-            <span key={x}>{x}</span>
+          {content.expertise.map((x, i) => (
+            <span key={`${i}-${x}`}>{x}</span>
           ))}
         </p>
       </div>
 
       <div className="cont-bar">
         <p>
-          © 2026 {p.name.toUpperCase()} · <span className="domain">{p.domain ? p.domain.toUpperCase() : 'RUDRA.ROM'}</span>
+          © {new Date().getFullYear()} {p.name.toUpperCase()} · <span className="domain">{p.domain ? p.domain.toUpperCase() : 'RUDRA.ROM'}</span>
         </p>
         <p className="visits" aria-label={visits ? `Visitor number ${visits}` : undefined}>
           {visits ? (

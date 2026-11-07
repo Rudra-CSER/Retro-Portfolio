@@ -54,7 +54,7 @@ export default function HallOfFame({ content }) {
           <span>SCORE</span>
         </li>
         {rows.map((r, i) => (
-          <li key={r.title} className={`hof-row rank-${i < 3 ? i + 1 : 'n'}`}>
+          <li key={`${i}-${r.title}`} className={`hof-row rank-${i < 3 ? i + 1 : 'n'}`}>
             <span className="hof-rank">{RANK(i)}</span>
             <span className="hof-entry">
               <strong>{r.title}</strong>

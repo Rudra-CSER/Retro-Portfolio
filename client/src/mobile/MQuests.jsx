@@ -147,8 +147,8 @@ export default function MQuests({ content, chapter, index, total }) {
           <b>(</b> AND MORE <b>)</b>
         </p>
         <Marquee speed={44} velocity label="More projects">
-          {more.map((m) => (
-            <span key={m.label} className="mq-more-item">
+          {more.map((m, i) => (
+            <span key={`${i}-${m.label}`} className="mq-more-item">
               {m.label}
               <i aria-hidden="true" />
             </span>

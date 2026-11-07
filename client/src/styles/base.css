@@ -241,6 +241,21 @@ html.has-cursor textarea {
 }
 .pixeltext rect {
   fill: currentColor;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.24s steps(3, end), fill 0.24s steps(2, end), filter 0.24s steps(2, end);
+}
+/* Minecraft-style block hover (lib/pixelHover.js) */
+.pixeltext rect.mc-up {
+  fill: var(--accent);
+  transform: translateY(-55%) scale(1.08);
+  filter: drop-shadow(0 1px 0 #000) brightness(1.15);
+  transition: none;
+}
+.pixeltext rect.mc-up2 {
+  fill: color-mix(in srgb, var(--accent) 55%, currentColor);
+  transform: translateY(-22%);
+  transition: transform 0.08s steps(2, end), fill 0.08s steps(1, end);
 }
 .pt-power rect {
   opacity: 0;

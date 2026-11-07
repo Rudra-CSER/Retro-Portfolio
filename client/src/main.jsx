@@ -12,6 +12,7 @@ import './styles/sections.css';
 import './styles/game.css';
 import './styles/mobile.css';
 import App from './App';
+import { initPixelHover } from './lib/pixelHover';
 
 // Apply saved palette before first paint to avoid a flash.
 try {
@@ -22,4 +23,5 @@ try {
   /* ignore */
 }
 
+initPixelHover();
 createRoot(document.getElementById('root')).render(<App />);

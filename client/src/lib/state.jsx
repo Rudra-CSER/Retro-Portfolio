@@ -42,7 +42,8 @@ export function GameStateProvider({ children }) {
   const [crt, setCrt] = useState(() => load('crt', true));
   const [palette, setPalette] = useState(() => (PALETTES.includes(load('palette', 'arcade')) ? load('palette', 'arcade') : 'arcade'));
   const [score, setScore] = useState(0);
-  const [hi, setHi] = useState(() => load('hi', 0));
+  const [savedHi] = useState(() => load('hi', 0));
+  const hi = Math.max(savedHi, score);
   const [stage, setStage] = useState('1-1');
   const [menuOpen, setMenuOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
@@ -86,11 +87,8 @@ export function GameStateProvider({ children }) {
   }, [palette]);
 
   useEffect(() => {
-    if (score > hi) {
-      setHi(score);
-      save('hi', score);
-    }
-  }, [score, hi]);
+    if (hi > savedHi) save('hi', hi);
+  }, [hi, savedHi]);
 
   const addScore = useCallback((n) => setScore((s) => s + n), []);
 

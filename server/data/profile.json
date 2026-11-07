@@ -1,0 +1,63 @@
+{
+  "person": {
+    "name": "Rudra Narayan Mondal",
+    "shortName": "Rudra",
+    "logotype": "RUDRA",
+    "initials": "RNM",
+    "role": "Software Engineer",
+    "org": "CRTDH Lab, IIT Kharagpur",
+    "location": "Kharagpur, India",
+    "origin": "Berhampore, West Bengal",
+    "coords": "22.31°N · 87.31°E",
+    "timezone": "Asia/Kolkata",
+    "availability": "AVAILABLE FOR WORK",
+    "email": "rudranarayanmondal20@gmail.com",
+    "domain": "",
+    "links": {
+      "github": "https://github.com/Rudra-CSER",
+      "linkedin": "",
+      "x": "",
+      "resume": "/resume.pdf"
+    }
+  },
+  "about": {
+    "label": "PLAYER BIO",
+    "paragraph": "I'm Rudra — a software engineer at CRTDH Lab, IIT Kharagpur, and an MS (research) scholar in nanoscience. I build machine-learning models for biological data, and the algorithms that turn point-of-care device images into biomarker readings. I came up through the MERN stack shipping full-stack apps, then followed my curiosity into diagnostics, edge AI and computational drug discovery.",
+    "accent": "Science that ships.",
+    "caption": "SOFTWARE ENGINEER · IIT KHARAGPUR, INDIA.",
+    "tagline": "From bench to browser.",
+    "short": "I'm Rudra, a software engineer at CRTDH Lab, IIT Kharagpur, and an MS (research) scholar. I build machine-learning models for biological data, and the algorithms that turn point-of-care images into biomarker readings. MERN by trade, scientist by curiosity."
+  },
+  "player": {
+    "stats": [
+      {
+        "k": "CLASS",
+        "v": "ENGINEER / RESEARCHER"
+      },
+      {
+        "k": "BASE",
+        "v": "IIT KHARAGPUR"
+      },
+      {
+        "k": "ORIGIN",
+        "v": "BERHAMPORE, WB"
+      },
+      {
+        "k": "SPECIAL",
+        "v": "ML × BIOLOGY"
+      }
+    ],
+    "stack": "MONGODB · EXPRESS · REACT · NODE · PYTHON"
+  },
+  "manual": {
+    "label": "PLAYER'S MANUAL · P.01",
+    "word": "RUDRA",
+    "pronunciation": "\\ ru·drə \\",
+    "pos": "NOUN",
+    "definition": "1. An engineer who *teaches machines to read biology*, ships software that real people depend on, and treats every layer — *from pixel to protein* — as his responsibility.",
+    "definition2": "2. (arcade slang) Player one. Known to respawn at 3 a.m. with a working build.",
+    "synonyms": "syn. BUILDER · RESEARCHER · DEBUGGER.",
+    "creditLead": "THIS ENTRY WAS WRITTEN BY",
+    "creditLink": "THE PLAYER HIMSELF"
+  }
+}

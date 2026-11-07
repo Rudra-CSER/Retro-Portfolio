@@ -112,8 +112,8 @@ export default function Manual({ content }) {
           <b>[</b> INVENTORY · TOOLS I WORK WITH <b>]</b>
         </p>
         <Marquee speed={46} label="Tools">
-          {content.tools.map((t) => (
-            <span key={t} className="inv-item">
+          {content.tools.map((t, i) => (
+            <span key={`${i}-${t}`} className="inv-item">
               <i className="inv-slot" aria-hidden="true" />
               {t}
             </span>

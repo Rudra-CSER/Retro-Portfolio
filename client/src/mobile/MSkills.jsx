@@ -29,7 +29,8 @@ export default function MSkills({ content, chapter, index, total }) {
   useEffect(() => {
     let s = null;
     let dead = false;
-    staticEl.current.style.backgroundImage = `url(${noiseTile()})`;
+    const tile = noiseTile();
+    if (tile) staticEl.current.style.backgroundImage = `url(${tile})`;
     import('../three/crtScene')
       .then(({ createCrtScene }) => {
         if (dead || !canvasBox.current) return;
@@ -204,8 +205,8 @@ export default function MSkills({ content, chapter, index, total }) {
           <b>[</b> INVENTORY <b>]</b>
         </p>
         <Marquee speed={38} label="Tools">
-          {content.tools.map((t) => (
-            <span key={t} className="inv-item">
+          {content.tools.map((t, i) => (
+            <span key={`${i}-${t}`} className="inv-item">
               <i className="inv-slot" aria-hidden="true" />
               {t}
             </span>

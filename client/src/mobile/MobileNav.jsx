@@ -70,7 +70,6 @@ export default function MobileNav({ chapters }) {
       if (hud) gsap.set(hud, { clearProps: 'transform' });
       document.documentElement.style.removeProperty('--m-hdr');
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // which chapter is under the bar

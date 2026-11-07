@@ -1,118 +1,83 @@
-// API client with graceful fallbacks, so the same build also runs as a
-// static preview with no server behind it.
-import bundled from '@content';
+// Talks to the Express server. Every call has a timeout and fails with an ApiError
+// whose message is safe to show on screen.
 
-const TIMEOUT = 4000;
+const TIMEOUT_MS = 8000;
 
-async function req(path, { method = 'GET', body, timeout = TIMEOUT } = {}) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), timeout);
+export class ApiError extends Error {
+  constructor(message, { status = 0, data = null } = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status; // 0 = never reached the server
+    this.data = data;
+  }
+}
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function request(path, { method = 'GET', body, timeout = TIMEOUT_MS } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  let res;
   try {
-    const res = await fetch(`./api${path}`, {
+    res = await fetch(`./api${path}`, {
       method,
-      headers: body ? { 'Content-Type': 'application/json' } : undefined,
-      body: body ? JSON.stringify(body) : undefined,
-      signal: ctrl.signal,
+      headers: body === undefined ? { Accept: 'application/json' } : { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: controller.signal,
     });
-    const isJson = (res.headers.get('content-type') || '').includes('application/json');
-    const data = isJson ? await res.json() : null;
-    if (!isJson || [404, 405, 501, 502, 503, 504].includes(res.status)) throw Object.assign(new Error('offline'), { offline: true });
-    if (!res.ok) throw Object.assign(new Error(data?.error || `HTTP ${res.status}`), { status: res.status, data });
-    return data;
   } catch (err) {
-    if (err.name === 'AbortError' || err instanceof TypeError) err.offline = true;
-    throw err;
+    throw new ApiError(err?.name === 'AbortError' ? 'The server took too long to answer.' : 'Could not reach the server.');
   } finally {
     clearTimeout(timer);
   }
+
+  const isJson = (res.headers.get('content-type') || '').includes('application/json');
+  const data = isJson ? await res.json().catch(() => null) : null;
+  if (!res.ok) throw new ApiError(data?.error || `The server answered ${res.status}.`, { status: res.status, data });
+  if (data === null) throw new ApiError('The server sent something unexpected.', { status: res.status });
+  return data;
 }
 
-export const bundledContent = bundled;
-
-let online = null; // null = unknown, true/false after first call
-export const isOnline = () => online;
-
-export async function fetchContent() {
-  try {
-    const data = await req('/content', { timeout: 1800 });
-    online = true;
-    return data;
-  } catch {
-    online = false;
-    return null;
-  }
-}
-
-export async function fetchHealth() {
-  try {
-    const data = await req('/health', { timeout: 1800 });
-    online = true;
-    return data;
-  } catch {
-    online = false;
-    return null;
-  }
-}
-
-export async function sendMessage(payload) {
-  return req('/contact', { method: 'POST', body: payload });
-}
-
-// ── leaderboard (server, else this browser) ────────────────────────────────
-const LOCAL_KEY = 'rudra.scores';
-const localScores = () => {
-  try {
-    return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
-  } catch {
-    return [];
-  }
-};
-const points = (gf, ga) => Math.max(0, gf * 100 + Math.max(0, gf - ga) * 50 + (gf > ga ? 150 : gf === ga ? 50 : 0));
-
-export async function fetchScores() {
-  try {
-    const data = await req('/scores');
-    return { scores: data.scores, local: false };
-  } catch {
-    return { scores: localScores().slice(0, 10), local: true };
-  }
-}
-
-export async function submitScore({ initials, gf, ga }) {
-  try {
-    const data = await req('/scores', { method: 'POST', body: { initials, gf, ga } });
-    return { ...data, local: false };
-  } catch (err) {
-    if (!err.offline) throw err;
-    const entry = { initials, gf, ga, points: points(gf, ga), createdAt: new Date().toISOString() };
-    const list = [...localScores(), entry].sort((a, b) => b.points - a.points).slice(0, 50);
+/** All site content (server/data/*.json). Retries twice on network/server errors. */
+export async function getContent() {
+  for (let attempt = 1; ; attempt++) {
     try {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+      return await request('/content');
+    } catch (err) {
+      const retryable = err.status === 0 || err.status >= 500;
+      if (!retryable || attempt === 3) throw err;
+      await sleep(500 * attempt);
+    }
+  }
+}
+
+/** → { scores: [{ initials, gf, ga, points, createdAt }] } */
+export const getScores = () => request('/scores');
+
+/** → { rank, points, scores } */
+export const submitScore = ({ initials, gf, ga }) => request('/scores', { method: 'POST', body: { initials, gf, ga } });
+
+/** Counts one visit per browser session, then just reads the count. → number, or null if unavailable. */
+export async function registerVisit() {
+  const KEY = 'rudra.visit';
+  let counted = false;
+  try {
+    counted = sessionStorage.getItem(KEY) === '1';
+  } catch {
+    /* storage blocked */
+  }
+  try {
+    const { count } = await request('/visits', { method: counted ? 'GET' : 'POST' });
+    try {
+      sessionStorage.setItem(KEY, '1');
     } catch {
       /* storage blocked */
     }
-    return { ok: true, rank: list.indexOf(entry) + 1, points: entry.points, scores: list.slice(0, 10), local: true };
-  }
-}
-
-export async function registerVisit() {
-  let counted = false;
-  try {
-    counted = sessionStorage.getItem('rudra.visit') === '1';
-  } catch {
-    /* ignore */
-  }
-  try {
-    const data = await req('/visits', { method: counted ? 'GET' : 'POST' });
-    try {
-      sessionStorage.setItem('rudra.visit', '1');
-    } catch {
-      /* ignore */
-    }
-    return data.count;
+    return count;
   } catch {
     return null;
   }
 }
 
-export const scorePoints = points;
+/** Same rules as the server (models/score.model.js), so the result screen can show points at once. */
+export const scorePoints = (gf, ga) => gf * 100 + Math.max(0, gf - ga) * 50 + (gf > ga ? 150 : gf === ga ? 50 : 0);

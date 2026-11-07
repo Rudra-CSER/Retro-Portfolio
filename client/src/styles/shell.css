@@ -253,6 +253,198 @@ html.cheat-flash body {
   display: none;
 }
 
+/* ── load screen (content loading / no signal / crash) ──────────────────── */
+.load-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  padding: 24px;
+  background: #050505;
+  text-align: center;
+}
+.load-title {
+  font-family: var(--font-pixel);
+  font-size: clamp(18px, 2.4vw, 26px);
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-shadow: 0 0 18px rgba(233, 178, 80, 0.35);
+}
+.load-dots::after {
+  content: '';
+  display: inline-block;
+  width: 3ch;
+  text-align: left;
+  animation: load-dots 1.2s steps(4, jump-none) infinite;
+}
+@keyframes load-dots {
+  0% { content: ''; }
+  33% { content: '.'; }
+  66% { content: '..'; }
+  100% { content: '...'; }
+}
+.load-screen.is-error .load-title {
+  color: var(--p2);
+  text-shadow: 0 0 18px rgba(255, 59, 92, 0.35);
+}
+.load-msg {
+  max-width: 34ch;
+  font-family: var(--font-term);
+  font-size: 19px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.load-retry,
+.crash-btn {
+  padding: 10px 18px;
+  border: 1px solid var(--accent);
+  font-family: var(--font-term);
+  font-size: 20px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  transition: background-color 0.2s, color 0.2s;
+}
+.load-retry:hover,
+.crash-btn:hover {
+  background: var(--accent);
+  color: #050505;
+}
+
+/* NO SIGNAL / WEAK SIGNAL: the logotype bounces around the whole screen (components/NoSignal.jsx) */
+.nosignal {
+  position: fixed;
+  inset: 0;
+  z-index: 2900; /* above the page and the CRT layer, below the custom cursor */
+  overflow: hidden;
+  background: #0b0b0b;
+}
+.nosignal.is-actionable {
+  cursor: pointer;
+}
+.nosignal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 3px);
+}
+.ns-mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  justify-items: center;
+  gap: clamp(8px, 1.2vw, 14px);
+  color: var(--ns-color, #e9b250);
+  will-change: transform;
+  transition: color 0.12s steps(2, jump-none);
+}
+.ns-mark .ns-logo {
+  width: clamp(150px, 22vw, 280px);
+  color: inherit;
+}
+.ns-title {
+  font-family: var(--font-pixel);
+  font-size: clamp(11px, 1.15vw, 15px);
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+  line-height: 1;
+}
+.ns-mark.is-corner {
+  animation: ns-corner 0.7s steps(7, jump-none);
+}
+@keyframes ns-corner {
+  0%,
+  28%,
+  56% {
+    color: #ffffff;
+    filter: drop-shadow(0 0 18px currentColor);
+  }
+  14%,
+  42%,
+  100% {
+    filter: none;
+  }
+}
+.ns-osd,
+.ns-corners {
+  position: absolute;
+  top: max(18px, env(safe-area-inset-top));
+  z-index: 1;
+  font-family: var(--font-term);
+  font-size: 20px;
+  letter-spacing: 0.2em;
+  pointer-events: none;
+}
+.ns-osd {
+  left: max(22px, env(safe-area-inset-left));
+  color: #2fbf71;
+  text-shadow: 0 0 10px rgba(47, 191, 113, 0.45);
+}
+.ns-corners {
+  right: max(22px, env(safe-area-inset-right));
+  color: var(--accent);
+}
+.ns-foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  text-align: center;
+  pointer-events: none;
+}
+.ns-hint {
+  max-width: min(100%, 760px);
+  font-family: var(--font-term);
+  font-size: 18px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-shadow: 0 0 6px #0b0b0b, 0 0 2px #0b0b0b;
+}
+.ns-action {
+  pointer-events: auto;
+  padding: 9px 16px;
+  border: 1px solid var(--dim);
+  background: rgba(11, 11, 11, 0.85);
+  font-family: var(--font-term);
+  font-size: 19px;
+  letter-spacing: 0.2em;
+  color: var(--text);
+  transition: border-color 0.2s, color 0.2s;
+}
+.ns-action:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.ns-action:disabled {
+  color: var(--muted);
+  cursor: progress;
+}
+
+/* a section that crashed: the rest of the page carries on */
+.crash-card {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  margin: 48px var(--gutter);
+  padding: 28px;
+  border: 1px dashed var(--dim);
+}
+.crash-text {
+  font-family: var(--font-term);
+  font-size: 19px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
 /* ── header / HUD ──────────────────────────────────────────────────────── */
 .hud {
   position: fixed;

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import PixelText from '../components/PixelText';
 import { createPixelCup, MATCH_SECONDS } from '../game/pixelCup';
-import { fetchScores, scorePoints, submitScore } from '../lib/api';
+import { getScores, scorePoints, submitScore } from '../lib/api';
 import { crowdStart, crowdStop, sfx } from '../lib/audio';
 import { music } from '../lib/music';
 import { useMedia } from '../lib/hooks';
@@ -102,7 +102,7 @@ export default function Arcade({ content, chapterNo = null }) {
   const modeRef = useRef('title');
   const [mode, setModeState] = useState('title'); // title | playing | paused | fulltime
   const [result, setResult] = useState(null);
-  const [board, setBoard] = useState({ scores: [], local: false, loaded: false });
+  const [board, setBoard] = useState({ scores: [], state: 'loading' }); // loading | ok | offline
   const [initials, setInitials] = useState('');
   const [submit, setSubmit] = useState({ state: 'idle', rank: null, error: '' });
   const coarse = useMedia('(pointer: coarse)');
@@ -134,12 +134,20 @@ export default function Arcade({ content, chapterNo = null }) {
   }, []);
 
   useEffect(() => {
-    fetchScores().then((r) => setBoard({ ...r, loaded: true }));
+    let current = true;
+    getScores().then(
+      (r) => current && setBoard({ scores: r.scores, state: 'ok' }),
+      () => current && setBoard({ scores: [], state: 'offline' }),
+    );
+    return () => {
+      current = false;
+    };
   }, []);
 
   useEffect(() => {
     const qs = new URLSearchParams(window.location.search);
     const e = createPixelCup(canvas.current, {
+      teams: { home: g.home, away: g.away },
       matchSeconds: Number(qs.get('match')) || MATCH_SECONDS,
       sfx,
       crowd: { start: crowdStart, stop: crowdStop },
@@ -182,7 +190,7 @@ export default function Arcade({ content, chapterNo = null }) {
       unlockScroll('game');
       music.release('game');
     };
-  }, [unlock, setMode]);
+  }, [unlock, setMode, g.home, g.away]);
 
   const start = () => {
     sfx.start();
@@ -292,11 +300,11 @@ export default function Arcade({ content, chapterNo = null }) {
     setSubmit({ state: 'sending', rank: null, error: '' });
     try {
       const r = await submitScore({ initials: ini, gf: result.gf, ga: result.ga });
-      setBoard({ scores: r.scores, local: r.local, loaded: true });
+      setBoard({ scores: r.scores, state: 'ok' });
       setSubmit({ state: 'done', rank: r.rank, error: '' });
       sfx.coin();
     } catch (err) {
-      setSubmit({ state: 'idle', rank: null, error: (err.message || 'COULD NOT SAVE').toUpperCase() });
+      setSubmit({ state: 'idle', rank: null, error: `${err.message || 'Could not save.'} Try again.`.toUpperCase() });
       sfx.error();
     }
   };
@@ -387,8 +395,7 @@ export default function Arcade({ content, chapterNo = null }) {
                   </form>
                 ) : (
                   <p className="ov-rank">
-                    YOU PLACED <b>#{submit.rank}</b>
-                    {board.local ? ' (THIS BROWSER)' : ' WORLDWIDE'}
+                    YOU PLACED <b>#{submit.rank}</b> WORLDWIDE
                   </p>
                 )}
                 <div className="ov-row">
@@ -451,10 +458,11 @@ export default function Arcade({ content, chapterNo = null }) {
           <h3 id="board-title" className="board-title">
             WORLD RANKINGS
           </h3>
-          <p className="board-src">{board.local ? 'OFFLINE PREVIEW · SAVED IN THIS BROWSER' : 'LIVE FROM MONGODB'}</p>
+          <p className="board-src">{board.state === 'offline' ? 'LEADERBOARD OFFLINE · TRY LATER' : 'GLOBAL TOP 10 · LIVE'}</p>
           <ol className="board-list">
-            {board.loaded && board.scores.length === 0 && <li className="board-empty">NO SCORES YET. BE THE FIRST.</li>}
-            {!board.loaded && <li className="board-empty">LOADING…</li>}
+            {board.state === 'ok' && board.scores.length === 0 && <li className="board-empty">NO SCORES YET. BE THE FIRST.</li>}
+            {board.state === 'loading' && <li className="board-empty">LOADING…</li>}
+            {board.state === 'offline' && <li className="board-empty">COULD NOT LOAD SCORES.</li>}
             {board.scores.map((s, i) => (
               <li key={`${s.initials}-${s.createdAt}-${i}`} className={i < 3 ? `top-${i + 1}` : ''}>
                 <span className="b-rank">{String(i + 1).padStart(2, '0')}</span>

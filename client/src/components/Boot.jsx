@@ -16,7 +16,7 @@ import { introSound } from '../intro/sound';
  * The tap on PRESS START is also what lets the browser play sound. Repeat visits in the
  * same tab get a short version; SKIP is always there.
  */
-export default function Boot({ logo = 'RUDRA', host, onReveal, onExit }) {
+export default function Boot({ logo = 'RUDRA', servedFrom = '', onReveal, onExit }) {
   const root = useRef(null);
   const canvas = useRef(null);
   const hit = useRef(null);
@@ -141,9 +141,10 @@ export default function Boot({ logo = 'RUDRA', host, onReveal, onExit }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // title screen's "SERVED FROM …" line (site.json → boot.servedFrom)
   useEffect(() => {
-    api.current?.setHost(host?.label || '');
-  }, [host]);
+    api.current?.setHost(servedFrom);
+  }, [servedFrom]);
 
   // START: a tap, a click or any key. Once it's running, the same again skips.
   useEffect(() => {

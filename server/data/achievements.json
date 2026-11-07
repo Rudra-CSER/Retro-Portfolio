@@ -1,0 +1,44 @@
+{
+  "hallOfFame": [
+    {
+      "title": "SOFTWARE DEVELOPMENT ENGINEER",
+      "detail": "CRTDH LAB · IIT KHARAGPUR",
+      "score": "2026 →"
+    },
+    {
+      "title": "MS (RESEARCH), NANOSCIENCE",
+      "detail": "IIT KHARAGPUR · PROF. SUMAN CHAKRABORTY",
+      "score": "2026 →"
+    },
+    {
+      "title": "SETU — LIVE IN PRODUCTION",
+      "detail": "600+ PATIENTS SCREENED",
+      "score": "LIVE"
+    },
+    {
+      "title": "BEST CINEMATOGRAPHY / VISUALS",
+      "detail": "SHORT FILM 'FIFTH HEAD' · KALEIDOSCOPE 2026",
+      "score": "WON"
+    },
+    {
+      "title": "OFFICIAL SELECTION — 17TH IIUSFF",
+      "detail": "1,269 FILMS · 92 COUNTRIES",
+      "score": "2026"
+    },
+    {
+      "title": "ML RESEARCH INTERN",
+      "detail": "CRTDH LAB · ON-DEVICE ORAL-CANCER CLASSIFIER",
+      "score": "2026"
+    },
+    {
+      "title": "GOOGLE CLOUD CERTIFIED",
+      "detail": "AI APPS WITH GEMINI & IMAGEN",
+      "score": "CERT"
+    },
+    {
+      "title": "B.TECH, COMPUTER SCIENCE",
+      "detail": "TECHNO INDIA UNIVERSITY · FYP: ML × GLOBAL EDUCATION",
+      "score": "2026"
+    }
+  ]
+}
