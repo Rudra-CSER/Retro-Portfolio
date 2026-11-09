@@ -41,6 +41,29 @@ describe('the website', () => {
     assert.equal(headers.get('x-powered-by'), null);
   });
 
+  test('the security policy lets the analytics in (Tag Manager, GA4, Clarity)', async () => {
+    const csp = (await site.request('/')).headers.get('content-security-policy');
+    const directive = (name) => csp.split(';').find((d) => d.trim().startsWith(`${name} `)) || '';
+    for (const host of ['https://www.googletagmanager.com', 'https://*.clarity.ms']) {
+      assert.ok(directive('script-src').includes(host), `script-src allows ${host}`);
+    }
+    for (const host of ['https://*.google-analytics.com', 'https://*.clarity.ms']) {
+      assert.ok(directive('connect-src').includes(host), `connect-src allows ${host}`);
+    }
+    assert.ok(!directive('script-src').includes("'unsafe-inline'"), 'inline scripts stay blocked');
+  });
+
+  test('index.html has no inline <script> (the security policy would block it)', async () => {
+    const html = await fs.readFile(new URL('../../client/index.html', import.meta.url), 'utf8');
+    const inline = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(([, attrs, body]) => !/\ssrc=/.test(attrs) && body.trim());
+    assert.equal(
+      inline.length,
+      0,
+      'client/index.html has an inline <script>, which the Content Security Policy blocks in the browser. ' +
+        'Put it in a file (like client/public/analytics.js) and load that with <script src="/…">.',
+    );
+  });
+
   test('serves files dropped into server/public', async () => {
     await fs.writeFile(path.join(site.dirs.public, 'resume.pdf'), '%PDF-1.4 test');
     const res = await site.request('/resume.pdf');
