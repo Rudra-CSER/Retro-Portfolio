@@ -6,8 +6,18 @@
 // lists this site plus the Google and Clarity hosts). A snippet pasted inline into index.html
 // gets blocked, and `npm test` fails to say so.
 (function () {
-  // Only on the real site: not on localhost, the tailnet, or *.workers.dev preview builds.
-  if (!/(^|\.)rudramundal\.dev$/.test(location.hostname)) return;
+  // Only on the real site, whatever its domain: never on this computer, the local network,
+  // the tailnet (*.ts.net or a 100.x address) or Cloudflare's *.workers.dev preview builds.
+  var host = location.hostname;
+  if (
+    !host ||
+    host === 'localhost' ||
+    host.charAt(0) === '[' ||
+    /^\d+(\.\d+){3}$/.test(host) ||
+    /\.(localhost|local|test|internal|ts\.net|workers\.dev)$/.test(host)
+  ) {
+    return;
+  }
 
   // Google Tag Manager (the official snippet, as a file)
   window.dataLayer = window.dataLayer || [];

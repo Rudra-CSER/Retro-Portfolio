@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import vm from 'node:vm';
 import { after, before, describe, test } from 'node:test';
 import { renderIndexHtml } from '../src/utils/html.js';
 import { INDEX_TEMPLATE, makeDirs, readData, startServer, writeData } from './helpers.js';
@@ -41,13 +42,13 @@ describe('the website', () => {
     assert.equal(headers.get('x-powered-by'), null);
   });
 
-  test('the security policy lets the analytics in (Tag Manager, GA4, Clarity)', async () => {
+  test('the security policy lets the analytics in (Tag Manager, GA4, Clarity, Cloudflare)', async () => {
     const csp = (await site.request('/')).headers.get('content-security-policy');
     const directive = (name) => csp.split(';').find((d) => d.trim().startsWith(`${name} `)) || '';
-    for (const host of ['https://www.googletagmanager.com', 'https://*.clarity.ms']) {
+    for (const host of ['https://www.googletagmanager.com', 'https://*.clarity.ms', 'https://static.cloudflareinsights.com']) {
       assert.ok(directive('script-src').includes(host), `script-src allows ${host}`);
     }
-    for (const host of ['https://*.google-analytics.com', 'https://*.clarity.ms']) {
+    for (const host of ['https://*.google-analytics.com', 'https://*.clarity.ms', 'https://cloudflareinsights.com']) {
       assert.ok(directive('connect-src').includes(host), `connect-src allows ${host}`);
     }
     assert.ok(!directive('script-src').includes("'unsafe-inline'"), 'inline scripts stay blocked');
@@ -62,6 +63,26 @@ describe('the website', () => {
       'client/index.html has an inline <script>, which the Content Security Policy blocks in the browser. ' +
         'Put it in a file (like client/public/analytics.js) and load that with <script src="/…">.',
     );
+  });
+
+  test('analytics load on the real domain only, whatever it is called', async () => {
+    const code = await fs.readFile(new URL('../../client/public/analytics.js', import.meta.url), 'utf8');
+    const loads = (hostname) => {
+      const added = [];
+      const document = { createElement: () => ({}), head: { appendChild: (el) => added.push(el.src) } };
+      vm.runInNewContext(code, { location: { hostname }, document, window: {}, Date });
+      return added;
+    };
+    for (const host of ['rudramondal.dev', 'www.rudramondal.dev', 'rudramundal.dev', 'example.com']) {
+      assert.deepEqual(
+        loads(host),
+        ['https://www.googletagmanager.com/gtm.js?id=GTM-W4F8RLRS', 'https://www.clarity.ms/tag/zaz66pzpl9'],
+        `loads on ${host}`,
+      );
+    }
+    for (const host of ['localhost', '127.0.0.1', '100.121.208.108', '[::1]', 'retro-portfolio.rudra.workers.dev', 'laptop.tailb05102.ts.net']) {
+      assert.deepEqual(loads(host), [], `stays off on ${host}`);
+    }
   });
 
   test('serves files dropped into server/public', async () => {
