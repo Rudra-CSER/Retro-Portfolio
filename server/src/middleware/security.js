@@ -1,12 +1,15 @@
 import helmet from 'helmet';
 
-// Analytics hosts (client/public/analytics.js): Google Tag Manager running GA4, and Microsoft
-// Clarity. From Google's "Use Tag Manager with a Content Security Policy" guide and Microsoft's
-// Clarity CSP note. Images need nothing extra: img-src already allows any https image.
+// Analytics hosts: Google Tag Manager running GA4 and Microsoft Clarity (both loaded by
+// client/public/analytics.js), and Cloudflare Web Analytics, whose beacon Cloudflare injects into
+// every page by itself while Web Analytics is on for the site. From Google's "Use Tag Manager with
+// a Content Security Policy" guide, Microsoft's Clarity CSP note and Cloudflare's CSP reference.
+// Images need nothing extra: img-src already allows any https image.
 const ANALYTICS_SCRIPTS = [
   'https://www.googletagmanager.com',
   'https://tagmanager.google.com', // Tag Manager's Preview / Tag Assistant mode
   'https://*.clarity.ms',
+  'https://static.cloudflareinsights.com',
 ];
 const ANALYTICS_CONNECT = [
   'https://www.googletagmanager.com',
@@ -16,6 +19,7 @@ const ANALYTICS_CONNECT = [
   'https://*.g.doubleclick.net',
   'https://*.clarity.ms',
   'https://c.bing.com',
+  'https://cloudflareinsights.com',
 ];
 
 /**
