@@ -8,6 +8,8 @@
   "name": "retro-portfolio",
   "main": "cloudflare/worker.js",
   "compatibility_date": "2026-11-01",
+  // Serve the site only on your own domain: no duplicate copy on *.workers.dev (or its preview URLs).
+  "workers_dev": false,
   "assets": {
     "directory": "./build/cloudflare",
     "binding": "ASSETS",

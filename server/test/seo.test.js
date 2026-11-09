@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 import { renderIndexHtml } from '../src/utils/html.js';
-import { jsonLdTag, robotsTxt, sitemapXml } from '../src/utils/seo.js';
+import { jsonLdTag, llmsTxt, robotsTxt, sitemapXml } from '../src/utils/seo.js';
 
 const content = {
   meta: {
@@ -46,5 +46,26 @@ describe('search-engine files', () => {
     assert.equal(person.image, 'https://example.dev/og.png');
     assert.deepEqual(person.sameAs, ['https://github.com/ada']);
     assert.equal(person.description, 'Short bio </script><b>');
+  });
+
+  test('llms.txt sums up the site in Markdown, with full links and no empty ones', () => {
+    const txt = llmsTxt({
+      ...content,
+      person: { ...content.person, email: 'ada@example.dev' },
+      about: { ...content.about, paragraph: 'I build engines.' },
+      projects: [
+        { name: 'Engine', title: 'Analytical engine.', description: 'Punched cards.', liveUrl: 'https://engine.example', sourceUrl: '' },
+        { name: 'Notes', title: 'Notes on the engine.', description: 'The first program.', liveUrl: '', sourceUrl: '' },
+      ],
+      hallOfFame: [{ title: 'First programmer', detail: 'Note G', score: '1843' }],
+    });
+    assert.match(txt, /^# Ada Lovelace\n\n> Description\n\nI build engines\.\n\n## Projects\n/);
+    assert.match(txt, /\n- \[Engine\]\(https:\/\/engine\.example\): Analytical engine\. Punched cards\.\n/);
+    assert.match(txt, /\n- Notes: Notes on the engine\. The first program\.\n/);
+    assert.match(txt, /\n- First programmer, Note G \(1843\)\n/);
+    assert.match(txt, /\n- \[Website\]\(https:\/\/example\.dev\/\)\n- \[GitHub\]\(https:\/\/github\.com\/ada\)\n/);
+    assert.match(txt, /\n- \[Resume\]\(https:\/\/example\.dev\/resume\.pdf\)\n/);
+    assert.doesNotMatch(txt, /LinkedIn/);
+    assert.match(txt, /\n- Email: ada@example\.dev\n$/);
   });
 });

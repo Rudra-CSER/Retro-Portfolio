@@ -5,6 +5,7 @@ import { createPixelCup, MATCH_SECONDS } from '../game/pixelCup';
 import { getScores, scorePoints, submitScore } from '../lib/api';
 import { crowdStart, crowdStop, sfx } from '../lib/audio';
 import { music } from '../lib/music';
+import { track } from '../lib/track';
 import { useMedia } from '../lib/hooks';
 import { gsap, lockScroll, prefersReduced, scrollToTarget, unlockScroll } from '../lib/motion';
 import { chapterIntro } from '../mobile/fx';
@@ -159,6 +160,7 @@ export default function Arcade({ content, chapterNo = null }) {
         if (ev.type === 'goal' && !ev.demo && ev.team === 0) unlock('goal');
         if (ev.type === 'fulltime') {
           const [gf, ga] = ev.score;
+          track('pixel_cup_finish', { goals_for: gf, goals_against: ga });
           setResult({ gf, ga, points: scorePoints(gf, ga) });
           setSubmit({ state: 'idle', rank: null, error: '' });
           if (gf > ga) unlock('champion');

@@ -5,6 +5,7 @@ import PixelStar from '../components/PixelStar';
 import { prefersReduced, ScrollTrigger, scrollToTarget, gsap } from '../lib/motion';
 import { registerVisit } from '../lib/api';
 import { copyText, selectText } from '../lib/clipboard';
+import { track } from '../lib/track';
 import { useMagnetic } from '../lib/hooks';
 import { useStage } from '../lib/useStage';
 import { useActions } from '../lib/state';
@@ -106,6 +107,7 @@ export default function Continue({ content, chapterNo = null }) {
     if (await copyText(p.email)) {
       sfx.coin();
       unlock('contact');
+      track('email_copy');
       setStatus({ state: 'ok', text: `COPIED ${p.email.toUpperCase()}. PLAYER 2, YOUR MOVE.` });
     } else {
       selectText(address.current);

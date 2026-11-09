@@ -33,6 +33,31 @@ describe('the website', () => {
     const { text } = await site.request('/');
     assert.ok(text.includes('<link rel="canonical" href="https://rudra.example/" />'));
     assert.ok(text.includes('<meta property="og:url" content="https://rudra.example/" />'));
+    assert.match(text, /<script type="application\/ld\+json">\{"@context":"https:\/\/schema\.org"/);
+  });
+
+  test('robots.txt, sitemap.xml and llms.txt come from the content, as on Cloudflare', async () => {
+    const robots = await site.request('/robots.txt');
+    assert.equal(robots.status, 200);
+    assert.match(robots.headers.get('content-type'), /text\/plain/);
+    assert.match(robots.text, /\nSitemap: https:\/\/rudra\.example\/sitemap\.xml\n/);
+
+    const sitemap = await site.request('/sitemap.xml');
+    assert.match(sitemap.headers.get('content-type'), /application\/xml/);
+    assert.match(sitemap.text, /<loc>https:\/\/rudra\.example\/<\/loc>/);
+
+    const llms = await site.request('/llms.txt');
+    assert.equal(llms.status, 200);
+    const { person } = await readData(site.dirs, 'profile.json');
+    assert.ok(llms.text.startsWith(`# ${person.name}\n`));
+
+    const data = await readData(site.dirs, 'site.json');
+    const siteUrl = data.meta.siteUrl;
+    data.meta.siteUrl = '';
+    await writeData(site.dirs, 'site.json', data);
+    assert.equal((await site.request('/llms.txt')).status, 404, 'no address, no files that need one');
+    data.meta.siteUrl = siteUrl;
+    await writeData(site.dirs, 'site.json', data);
   });
 
   test('sends security headers', async () => {

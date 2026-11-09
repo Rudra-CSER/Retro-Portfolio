@@ -1,11 +1,12 @@
 // Search-engine files made from server/data. The Cloudflare build (cloudflare/build.js) writes them
-// into build/, and the Express server (routes/web.routes.js) can serve the same ones locally.
-//   robots.txt · sitemap.xml · the JSON-LD <script> that goes into index.html
+// into build/, and the Express server (routes/web.routes.js) serves the same ones.
+//   robots.txt · sitemap.xml · llms.txt · the JSON-LD <script> that goes into index.html
 
 /** "https://rudramondal.dev" → "https://rudramondal.dev/" */
 const home = (siteUrl) => `${String(siteUrl || '').replace(/\/+$/, '')}/`;
 const xmlEscape = (s) => String(s).replace(/[<>&'"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' })[c]);
 const isLink = (v) => /^https?:\/\//.test(v);
+const LABELS = { github: 'GitHub', linkedin: 'LinkedIn', x: 'X', resume: 'Resume' };
 
 /** robots.txt: crawlers may fetch everything, including /api/content, which the page needs to render. */
 export function robotsTxt(siteUrl) {
@@ -58,4 +59,41 @@ export function jsonLdTag(c) {
   };
   // "<" is escaped so nothing in the data can close the <script> tag early.
   return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+}
+
+/**
+ * llms.txt (llmstxt.org): a plain Markdown summary of the site for AI tools that look for one.
+ * Google Search ignores it; it is built from the same JSON as the page, so it never goes stale.
+ */
+export function llmsTxt(c) {
+  const url = home(c.meta.siteUrl);
+  const project = (p) => {
+    const link = p.liveUrl || p.sourceUrl;
+    return `- ${link ? `[${p.name}](${link})` : p.name}: ${p.title} ${p.description}`;
+  };
+  const links = Object.entries(c.person.links)
+    .filter(([, v]) => v && (isLink(v) || v.startsWith('/')))
+    .map(([key, v]) => `- [${LABELS[key] ?? key}](${new URL(v, url).href})`);
+  return [
+    `# ${c.person.name}`,
+    '',
+    `> ${c.meta.description}`,
+    '',
+    c.about.paragraph,
+    '',
+    '## Projects',
+    '',
+    ...c.projects.map(project),
+    '',
+    '## Experience and awards',
+    '',
+    ...c.hallOfFame.map((h) => `- ${h.title}, ${h.detail} (${h.score})`),
+    '',
+    '## Contact',
+    '',
+    `- [Website](${url})`,
+    ...links,
+    `- Email: ${c.person.email}`,
+    '',
+  ].join('\n');
 }
