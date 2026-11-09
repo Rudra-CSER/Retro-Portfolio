@@ -42,6 +42,10 @@
 .hero-px {
   width: 100%;
 }
+.hero-name {
+  display: block;
+  margin-bottom: 1.2em;
+}
 .hero-italic {
   display: block;
   margin-top: 0.12em;

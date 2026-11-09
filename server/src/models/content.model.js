@@ -2,7 +2,7 @@
 // at startup and whenever you edit them, so a typo shows up as a clear message
 // ("projects.json: projects[2].liveUrl must be a full http(s):// link")
 // instead of a blank page. Run `npm run check` to check them by hand.
-import { color, email, list, shape, siteLink, slug, text, timezone, url, validate } from '../utils/schema.js';
+import { color, email, list, optional, shape, siteLink, slug, text, timezone, url, validate } from '../utils/schema.js';
 
 const person = shape({
   name: text(),
@@ -83,6 +83,8 @@ export const CONTENT_SCHEMAS = {
       description: text(),
       shareTitle: text(),
       shareDescription: text(),
+      shareImage: optional(siteLink()),
+      shareImageAlt: optional(text()),
       siteUrl: url({ empty: true }),
     }),
     boot: shape({ servedFrom: text({ empty: true }) }),

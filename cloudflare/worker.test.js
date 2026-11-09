@@ -66,7 +66,7 @@ async function startApi() {
     } else if (body !== undefined) {
       init.body = body;
     }
-    const res = await api(new Request(`https://rudramundal.dev${path}`, init), env);
+    const res = await api(new Request(`https://rudramondal.dev${path}`, init), env);
     const text = await res.text();
     let parsed = null;
     try {

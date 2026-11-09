@@ -8,8 +8,11 @@ function setTag(html, pattern, value) {
   return html.replace(pattern, (_, before, after) => `${before}${escapeHtml(value)}${after}`);
 }
 
-/** meta = site.json → meta: { title, description, shareTitle, shareDescription, siteUrl } */
-export function renderIndexHtml(template, meta) {
+/**
+ * meta   = site.json → meta: { title, description, shareTitle, shareDescription, shareImage?, shareImageAlt?, siteUrl }
+ * jsonLd = an optional <script type="application/ld+json"> tag (utils/seo.js → jsonLdTag)
+ */
+export function renderIndexHtml(template, meta, { jsonLd = '' } = {}) {
   let html = template;
   html = setTag(html, /(<title>)[\s\S]*?(<\/title>)/, meta.title);
   html = setTag(html, /(<meta\s+name="description"\s+content=")[^"]*(")/, meta.description);
@@ -18,8 +21,22 @@ export function renderIndexHtml(template, meta) {
 
   const siteUrl = (meta.siteUrl || '').replace(/\/+$/, '');
   if (siteUrl) {
-    const url = escapeHtml(`${siteUrl}/`);
-    html = html.replace('</head>', `    <link rel="canonical" href="${url}" />\n    <meta property="og:url" content="${url}" />\n  </head>`);
+    const url = `${siteUrl}/`;
+    const head = [`<link rel="canonical" href="${escapeHtml(url)}" />`, `<meta property="og:url" content="${escapeHtml(url)}" />`];
+    if (meta.shareImage) {
+      // Share images need a full URL: "/og.png" becomes "https://rudramondal.dev/og.png".
+      const image = escapeHtml(new URL(meta.shareImage, url).href);
+      head.push(
+        `<meta property="og:image" content="${image}" />`,
+        '<meta property="og:image:width" content="1200" />',
+        '<meta property="og:image:height" content="630" />',
+        `<meta property="og:image:alt" content="${escapeHtml(meta.shareImageAlt || meta.shareTitle)}" />`,
+        `<meta name="twitter:image" content="${image}" />`,
+      );
+    }
+    if (jsonLd) head.push(jsonLd);
+    // A function, so a "$" in your content is never read as a replacement pattern.
+    html = html.replace('</head>', () => `    ${head.join('\n    ')}\n  </head>`);
   }
   return html;
 }

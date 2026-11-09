@@ -95,6 +95,7 @@ export default function Hero({ content, revealed, mobile = false }) {
       </div>
       <div className="hero-copy">
         <h1 className="hero-title">
+          <span className="caps-label hero-name">{content.person.name}</span>
           <span className="sr-only">
             {h.lines.join(' ')} {h.italic}
           </span>

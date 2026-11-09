@@ -8,6 +8,7 @@
 // checked against the same model, index.html gets the same title and share tags, and the same
 // security headers apply. If server/data has a mistake, the build stops with the list of problems
 // and Cloudflare keeps serving the last version that built.
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -16,6 +17,7 @@ import { config } from '../server/src/config.js';
 import { securityHeaders } from '../server/src/middleware/security.js';
 import { ContentError, createContentService } from '../server/src/services/content.service.js';
 import { NOT_FOUND_PAGE, renderIndexHtml } from '../server/src/utils/html.js';
+import { jsonLdTag, robotsTxt, sitemapXml } from '../server/src/utils/seo.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'build');
@@ -64,6 +66,21 @@ function headersFile(headers) {
   return lines.join('\n');
 }
 
+/** The day the content or the page code last changed in git (YYYY-MM-DD): the sitemap's lastmod. */
+function lastChanged() {
+  try {
+    const day = execFileSync('git', ['log', '-1', '--format=%cs', '--', 'server/data', 'client/src', 'client/index.html'], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    if (day) return day;
+  } catch {
+    // not a git checkout: use today
+  }
+  return new Date().toISOString().slice(0, 10);
+}
+
 function fail(message) {
   console.error(`\n${message.startsWith('✖') ? '' : '✖ '}${message}\n`);
   process.exit(1);
@@ -98,9 +115,17 @@ async function main() {
   });
   await fs.cp(config.paths.dist, SITE, { recursive: true });
 
-  await fs.writeFile(path.join(SITE, 'index.html'), renderIndexHtml(template, data.sections.site.meta));
+  const { meta } = data.sections.site;
+  const jsonLd = meta.siteUrl ? jsonLdTag(data.content) : '';
+  await fs.writeFile(path.join(SITE, 'index.html'), renderIndexHtml(template, meta, { jsonLd }));
   await fs.writeFile(path.join(SITE, '404.html'), NOT_FOUND_PAGE);
   await fs.writeFile(path.join(SITE, '_headers'), headersFile(data.headers));
+
+  // Files for search engines. They need the site's full https:// address.
+  if (meta.siteUrl) {
+    await fs.writeFile(path.join(SITE, 'robots.txt'), robotsTxt(meta.siteUrl));
+    await fs.writeFile(path.join(SITE, 'sitemap.xml'), sitemapXml(meta.siteUrl, lastChanged()));
+  }
 
   const { content, sections, etag, headers } = data;
   await fs.writeFile(path.join(OUT, 'worker-data.json'), JSON.stringify({ content, sections, etag, headers }));

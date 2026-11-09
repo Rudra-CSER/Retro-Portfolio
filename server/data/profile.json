@@ -12,7 +12,7 @@
     "timezone": "Asia/Kolkata",
     "availability": "AVAILABLE FOR WORK",
     "email": "rudranarayanmondal20@gmail.com",
-    "domain": "rudramundal.dev",
+    "domain": "rudramondal.dev",
     "links": {
       "github": "https://github.com/Rudra-CSER",
       "linkedin": "",
@@ -22,11 +22,11 @@
   },
   "about": {
     "label": "PLAYER BIO",
-    "paragraph": "I'm Rudra — a software engineer at CRTDH Lab, IIT Kharagpur, and an MS (research) scholar in nanoscience. I build machine-learning models for biological data, and the algorithms that turn point-of-care device images into biomarker readings. I came up through the MERN stack shipping full-stack apps, then followed my curiosity into diagnostics, edge AI and computational drug discovery.",
+    "paragraph": "I'm Rudra Narayan Mondal — a software engineer at CRTDH Lab, IIT Kharagpur, and an MS (research) scholar in nanoscience. I build machine-learning models for biological data, and the algorithms that turn point-of-care device images into biomarker readings. I came up through the MERN stack shipping full-stack apps, then followed my curiosity into diagnostics, edge AI and computational drug discovery.",
     "accent": "Science that ships.",
     "caption": "SOFTWARE ENGINEER · IIT KHARAGPUR, INDIA.",
     "tagline": "From bench to browser.",
-    "short": "I'm Rudra, a software engineer at CRTDH Lab, IIT Kharagpur, and an MS (research) scholar. I build machine-learning models for biological data, and the algorithms that turn point-of-care images into biomarker readings. MERN by trade, scientist by curiosity."
+    "short": "I'm Rudra Narayan Mondal, a software engineer at CRTDH Lab, IIT Kharagpur, and an MS (research) scholar. I build machine-learning models for biological data, and the algorithms that turn point-of-care images into biomarker readings. MERN by trade, scientist by curiosity."
   },
   "player": {
     "stats": [
