@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 import { renderIndexHtml } from '../src/utils/html.js';
-import { jsonLdTag, llmsTxt, robotsTxt, sitemapXml } from '../src/utils/seo.js';
+import { jsonLdTag, llmsTxt, noscriptHtml, robotsTxt, sitemapXml } from '../src/utils/seo.js';
 
 const content = {
   meta: {
@@ -67,5 +67,30 @@ describe('search-engine files', () => {
     assert.match(txt, /\n- \[Resume\]\(https:\/\/example\.dev\/resume\.pdf\)\n/);
     assert.doesNotMatch(txt, /LinkedIn/);
     assert.match(txt, /\n- Email: ada@example\.dev\n$/);
+  });
+
+  test('the <noscript> page carries the content, escaped, in place of the placeholder', () => {
+    const full = {
+      ...content,
+      person: { ...content.person, email: 'ada@example.dev' },
+      about: { ...content.about, paragraph: 'I build <engines> & "programs".' },
+      projects: [{ name: 'Engine', title: 'Analytical engine.', description: 'Cards.', liveUrl: '', sourceUrl: 'https://src.example' }],
+      hallOfFame: [{ title: 'First programmer', detail: 'Note G', score: '1843' }],
+    };
+    const page =
+      '<html><head><title>x</title><noscript><style>.a{}</style></noscript></head><body>' +
+      '<noscript>\n<div data-nojs style="padding:4px">Needs JavaScript.</div>\n</noscript><div id="root"></div></body></html>';
+    const html = renderIndexHtml(page, content.meta, { noscript: noscriptHtml(full) });
+
+    assert.ok(html.includes('<noscript><style>.a{}</style></noscript>'), 'the <head> noscript is left alone');
+    const [, block] = html.match(/<div data-nojs style="padding:4px">([\s\S]*?)<\/div>\s*<\/noscript>/);
+    assert.doesNotMatch(block, /Needs JavaScript\./);
+    assert.match(block, /<h1>Ada Lovelace<\/h1>/);
+    assert.match(block, /<p>Engineer · Lab<\/p>/);
+    assert.match(block, /I build &lt;engines&gt; &amp; &quot;programs&quot;\./);
+    assert.match(block, /<a style="color:#FFB627" href="https:\/\/src\.example">Engine<\/a>: Analytical engine\. Cards\./);
+    assert.match(block, /href="mailto:ada@example\.dev"/);
+    assert.match(block, /href="\/resume\.pdf">Resume</);
+    assert.doesNotMatch(block, /LinkedIn/);
   });
 });

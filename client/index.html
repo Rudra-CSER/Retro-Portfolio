@@ -15,6 +15,8 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:site_name" content="Rudra Narayan Mondal" />
     <meta property="og:locale" content="en_IN" />
+    <!-- lets Google show the share card as a large image (Discover, image results) -->
+    <meta name="robots" content="max-image-preview:large" />
     <meta name="google-site-verification" content="PIt327-hVNmzzRLc-WZUneSmP26mC_TogB8MbD_gHGY" />
     <!-- Google Tag Manager + Microsoft Clarity. Loaded from a file, not inline: the security
          policy blocks inline scripts. IDs and details: client/public/analytics.js -->
@@ -53,8 +55,10 @@
     <noscript><style>.ns-prejs { display: none; }</style></noscript>
   </head>
   <body>
+    <!-- The server replaces this plain version with one made from server/data (utils/seo.js → noscriptHtml),
+         for visitors and crawlers that don't run JavaScript, such as most AI search crawlers. -->
     <noscript>
-      <div style="padding:40px;font:18px/1.5 ui-monospace,monospace;color:#F2EEE6;background:#050505;min-height:100vh">
+      <div data-nojs style="padding:40px;font:18px/1.5 ui-monospace,monospace;color:#F2EEE6;background:#050505;min-height:100vh">
         RUDRA.ROM needs JavaScript to boot.<br />Rudra Narayan Mondal — Software Engineer, CRTDH Lab, IIT Kharagpur.<br />
         <a style="color:#FFB627" href="https://github.com/Rudra-CSER">github.com/Rudra-CSER</a>
       </div>

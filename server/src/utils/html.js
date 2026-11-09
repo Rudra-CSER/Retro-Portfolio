@@ -9,11 +9,15 @@ function setTag(html, pattern, value) {
 }
 
 /**
- * meta   = site.json → meta: { title, description, shareTitle, shareDescription, shareImage?, shareImageAlt?, siteUrl }
- * jsonLd = an optional <script type="application/ld+json"> tag (utils/seo.js → jsonLdTag)
+ * meta     = site.json → meta: { title, description, shareTitle, shareDescription, shareImage?, shareImageAlt?, siteUrl }
+ * jsonLd   = an optional <script type="application/ld+json"> tag (utils/seo.js → jsonLdTag)
+ * noscript = optional HTML for the page's <noscript> block, <div data-nojs> in index.html (utils/seo.js → noscriptHtml)
  */
-export function renderIndexHtml(template, meta, { jsonLd = '' } = {}) {
+export function renderIndexHtml(template, meta, { jsonLd = '', noscript = '' } = {}) {
   let html = template;
+  if (noscript) {
+    html = html.replace(/(<div data-nojs[^>]*>)[\s\S]*?(<\/div>\s*<\/noscript>)/, (_, open, close) => `${open}\n${noscript}\n${close}`);
+  }
   html = setTag(html, /(<title>)[\s\S]*?(<\/title>)/, meta.title);
   html = setTag(html, /(<meta\s+name="description"\s+content=")[^"]*(")/, meta.description);
   html = setTag(html, /(<meta\s+property="og:title"\s+content=")[^"]*(")/, meta.shareTitle);

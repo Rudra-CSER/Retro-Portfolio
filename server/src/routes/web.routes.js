@@ -3,22 +3,24 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import express, { Router } from 'express';
 import { NOT_FOUND_PAGE, renderIndexHtml } from '../utils/html.js';
-import { jsonLdTag, llmsTxt, robotsTxt, sitemapXml } from '../utils/seo.js';
+import { jsonLdTag, llmsTxt, noscriptHtml, robotsTxt, sitemapXml } from '../utils/seo.js';
 
 export function webRoutes({ distDir, publicDir, content }) {
   const router = Router();
   const indexFile = path.join(distDir, 'index.html');
   let cached = { key: '', html: '' };
 
-  // index.html with the meta tags from site.json (and, once meta.siteUrl is set, the JSON-LD).
-  // Re-rendered only when the build or the content changes, so `npm run build` takes effect without a restart.
+  // index.html with the meta tags from site.json, the plain <noscript> version of the page and, once
+  // meta.siteUrl is set, the JSON-LD. Re-rendered only when the build or the content changes, so
+  // `npm run build` takes effect without a restart.
   async function indexPage() {
     const stat = await fs.stat(indexFile).catch(() => null);
     if (!stat) return null;
     const key = `${stat.mtimeMs}:${stat.size}:${await content.version()}`;
     if (cached.key !== key) {
       const [template, all] = await Promise.all([fs.readFile(indexFile, 'utf8'), content.getContent()]);
-      cached = { key, html: renderIndexHtml(template, all.meta, { jsonLd: all.meta.siteUrl ? jsonLdTag(all) : '' }) };
+      const jsonLd = all.meta.siteUrl ? jsonLdTag(all) : '';
+      cached = { key, html: renderIndexHtml(template, all.meta, { jsonLd, noscript: noscriptHtml(all) }) };
     }
     return cached.html;
   }

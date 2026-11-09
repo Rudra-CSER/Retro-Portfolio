@@ -16,6 +16,8 @@ export default function About({ content }) {
         type: 'lines',
         mask: 'lines',
         autoSplit: true,
+        // no aria-label on the <p> (not allowed there): the split lines stay readable as they are
+        aria: 'none',
         linesClass: 'about-line',
         onSplit(self) {
           return gsap.from(self.lines, {

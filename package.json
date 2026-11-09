@@ -17,6 +17,7 @@
     "cf:dev": "npm run build:cloudflare && wrangler dev",
     "cf:deploy": "npm run build:cloudflare && wrangler deploy",
     "check": "npm run check -w server",
+    "indexnow": "node server/scripts/indexnow.js",
     "test": "npm test -w server && node --disable-warning=ExperimentalWarning --test cloudflare/*.test.js",
     "lint": "eslint ."
   },

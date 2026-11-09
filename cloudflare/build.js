@@ -17,7 +17,7 @@ import { config } from '../server/src/config.js';
 import { securityHeaders } from '../server/src/middleware/security.js';
 import { ContentError, createContentService } from '../server/src/services/content.service.js';
 import { NOT_FOUND_PAGE, renderIndexHtml } from '../server/src/utils/html.js';
-import { jsonLdTag, llmsTxt, robotsTxt, sitemapXml } from '../server/src/utils/seo.js';
+import { jsonLdTag, llmsTxt, noscriptHtml, robotsTxt, sitemapXml } from '../server/src/utils/seo.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'build');
@@ -120,7 +120,8 @@ async function main() {
 
   const { meta } = data.sections.site;
   const jsonLd = meta.siteUrl ? jsonLdTag(data.content) : '';
-  await fs.writeFile(path.join(SITE, 'index.html'), renderIndexHtml(template, meta, { jsonLd }));
+  const noscript = noscriptHtml(data.content);
+  await fs.writeFile(path.join(SITE, 'index.html'), renderIndexHtml(template, meta, { jsonLd, noscript }));
   await fs.writeFile(path.join(SITE, '404.html'), NOT_FOUND_PAGE);
   await fs.writeFile(path.join(SITE, '_headers'), headersFile(data.headers));
 

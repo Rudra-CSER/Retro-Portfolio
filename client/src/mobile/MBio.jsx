@@ -21,6 +21,8 @@ export default function MBio({ content, chapter, index, total }) {
         type: 'lines',
         mask: 'lines',
         autoSplit: true,
+        // no aria-label on the <p> (not allowed there): the split lines stay readable as they are
+        aria: 'none',
         onSplit: (self) =>
           gsap.from(self.lines, {
             yPercent: 110,
