@@ -58,11 +58,14 @@ function helmetHeaders() {
   });
 }
 
-/** _headers: security headers on every static file, and a long cache for the hashed build files. */
+/** _headers: security headers on every static file, a long cache for the hashed build files, UTF-8 for llms.txt. */
 function headersFile(headers) {
   const lines = ['# Made by cloudflare/build.js from server/src/middleware/security.js. Edit that file, not this one.', '/*'];
   for (const [name, value] of Object.entries(headers)) lines.push(`  ${name}: ${value}`);
-  lines.push('', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', '');
+  lines.push('', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable');
+  // Cloudflare sends .txt files as "text/plain" with no charset, so some readers would decode
+  // llms.txt's dashes and arrows as Windows-1252 ("â€”" instead of "—").
+  lines.push('', '/llms.txt', '  Content-Type: text/plain; charset=utf-8', '');
   return lines.join('\n');
 }
 
