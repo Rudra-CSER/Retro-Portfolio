@@ -1,10 +1,10 @@
 {
   "meta": {
-    "title": "Rudra Narayan Mondal — Software Engineer · ML for Biology",
-    "description": "Software engineer at CRTDH Lab, IIT Kharagpur. Machine learning for biological data, biomarker quantification for point-of-care devices, and full-stack MERN apps.",
-    "shareTitle": "RUDRA.ROM — Rudra Narayan Mondal",
+    "title": "Rudra Narayan Mondal Software Engineer · ML for Biology",
+    "description": "Rudra Narayan Mondal , Software engineer at CRTDH Lab, IIT Kharagpur. Machine learning for biological data, biomarker quantification for point-of-care devices, and full-stack MERN apps.",
+    "shareTitle": "Rudra.dev Rudra Narayan Mondal",
     "shareDescription": "Teaching machines to read biology, from pixels to proteins. Press start.",
-    "siteUrl": "https://rudramundal.dev"
+    "siteUrl": "https://rudramondal.dev"
   },
   "boot": {
     "servedFrom": "CLOUDFLARE EDGE"
