@@ -435,10 +435,10 @@
   color: var(--accent);
 }
 .board-list li.top-2 .b-ini {
-  color: #d9d6cf;
+  color: var(--silver);
 }
 .board-list li.top-3 .b-ini {
-  color: #cd8a4b;
+  color: var(--bronze);
 }
 .board-empty {
   display: block !important;

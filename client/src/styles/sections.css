@@ -953,7 +953,7 @@
   place-items: center;
   width: 60px;
   height: 60px;
-  border: 1px solid rgba(242, 238, 230, 0.45);
+  border: 1px solid color-mix(in srgb, var(--text) 45%, transparent);
   border-radius: 50%;
   overflow: hidden;
   transition: border-color 0.2s, background-color 0.2s;
@@ -967,7 +967,7 @@
 .q-cta:hover .q-circle {
   border-color: var(--accent);
   background: var(--accent);
-  color: #050505;
+  color: var(--on-accent);
 }
 .q-cta:hover .q-arrow {
   animation: arrow-slide 0.5s var(--ease-out);
@@ -1018,7 +1018,7 @@
 .quests.is-stacked .q-slide {
   position: relative;
   padding: 72px var(--gutter);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid color-mix(in srgb, var(--text) 6%, transparent);
 }
 .quests.is-stacked .q-slide:nth-child(1) {
   background: #0b1611;
@@ -1273,10 +1273,10 @@
   color: var(--accent);
 }
 .rank-2 .hof-rank {
-  color: #d9d6cf;
+  color: var(--silver);
 }
 .rank-3 .hof-rank {
-  color: #cd8a4b;
+  color: var(--bronze);
 }
 .hof-foot {
   max-width: 1180px;
@@ -1472,7 +1472,7 @@
   gap: 12px;
   padding: 8px 8px 8px 22px;
   background: var(--text);
-  color: #050505;
+  color: var(--on-text);
   border-radius: 999px;
   font-family: var(--font-term);
   font-size: 21px;
@@ -1484,7 +1484,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #050505;
+  background: var(--on-text);
   color: var(--text);
   font-size: 16px;
   transition: transform 0.3s var(--ease-out), background-color 0.2s;
@@ -1492,7 +1492,7 @@
 .send-pill:hover .send-arrow {
   transform: rotate(45deg);
   background: var(--accent);
-  color: #050505;
+  color: var(--on-accent);
 }
 .cont-status {
   margin-top: 18px;
@@ -1626,9 +1626,9 @@
   place-items: center;
   width: 16px;
   height: 22px;
-  background: #050505;
+  background: var(--odo-bg);
   border: 1px solid var(--bg-3);
-  color: var(--text);
+  color: var(--odo-fg);
   font-weight: 400;
 }
 .to-top {
@@ -1656,7 +1656,7 @@
 .to-top:hover .to-top-circle {
   background: var(--accent);
   border-color: var(--accent);
-  color: #050505;
+  color: var(--on-accent);
 }
 @media (max-width: 860px) {
   .cont-top {

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { gsap, lockScroll, prefersReduced, scrollToTarget, unlockScroll } from '../lib/motion';
-import { useGame, PALETTE_NAMES } from '../lib/state';
+import { useGame, INTRO_NAMES, PALETTE_NAMES } from '../lib/state';
 import { sfx } from '../lib/audio';
 
 const ITEMS = [
@@ -137,6 +137,16 @@ export default function PauseMenu({ mobile = false }) {
           }}
         >
           PALETTE <b>{PALETTE_NAMES[g.palette]}</b>
+        </button>
+        <button
+          type="button"
+          title="How the opening plays the next time the site loads. AUTO lets this device decide."
+          onClick={() => {
+            g.cycleIntro();
+            sfx.select();
+          }}
+        >
+          INTRO <b>{INTRO_NAMES[g.intro]}</b>
         </button>
       </div>
       <p className="pause-foot pm-fade">TIP — TRY ↑ ↑ ↓ ↓ ← → ← → B A ANYWHERE</p>

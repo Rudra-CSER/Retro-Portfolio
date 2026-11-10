@@ -1,7 +1,7 @@
 import { forwardRef, useRef } from 'react';
 import PixelText from './PixelText';
 import PixelRing from './PixelRing';
-import { useGame } from '../lib/state';
+import { PALETTE_NAMES, PALETTE_SWATCHES, PALETTES, useGame } from '../lib/state';
 import { pad, useMagnetic } from '../lib/hooks';
 import { scrollToTarget } from '../lib/motion';
 import { sfx } from '../lib/audio';
@@ -68,6 +68,27 @@ const Header = forwardRef(function Header({ logo, booted }, logoRef) {
       </div>
 
       <div className="hud-right">
+        {/* one tap changes the whole site's colours (the same five as PALETTE in the pause menu) */}
+        <div className="hud-pal" role="group" aria-label="Colour palette">
+          {PALETTES.map((p) => (
+            <button
+              key={p}
+              type="button"
+              className={p === g.palette ? 'is-on' : ''}
+              aria-pressed={p === g.palette}
+              aria-label={`${PALETTE_NAMES[p]} palette`}
+              title={PALETTE_NAMES[p]}
+              onClick={() => {
+                if (p === g.palette) return;
+                g.setPalette(p);
+                g.unlock('palette');
+                sfx.select();
+              }}
+            >
+              <i style={{ '--sw': PALETTE_SWATCHES[p] }} />
+            </button>
+          ))}
+        </div>
         {g.sound && g.music && g.track?.playing ? (
           <button type="button" className="hud-track" onClick={() => g.nextTrack()} aria-label={`Now playing ${g.track.title}. Next track`}>
             <span className="snd-bars" aria-hidden="true">

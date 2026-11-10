@@ -26,11 +26,12 @@ function Cycle({ words, active }) {
   );
 }
 
-export default function Hero({ content, revealed, mobile = false }) {
+export default function Hero({ content, revealed, booted = true, mobile = false }) {
   const root = useRef(null);
   const sceneBox = useRef(null);
   const scene = useRef(null);
   const [noGL, setNoGL] = useState(false);
+  const bootedRef = useRef(booted);
   const h = content.hero;
   useStage(root, '1-1');
 
@@ -40,7 +41,8 @@ export default function Hero({ content, revealed, mobile = false }) {
       .then(({ createHeroScene }) => {
         if (disposed || !sceneBox.current) return;
         try {
-          scene.current = createHeroScene(sceneBox.current, { pixel: 3 });
+          // built now (so it's ready when the page opens), but held still until the intro is over
+          scene.current = createHeroScene(sceneBox.current, { pixel: 3, held: !bootedRef.current });
         } catch {
           setNoGL(true);
         }
@@ -52,6 +54,12 @@ export default function Hero({ content, revealed, mobile = false }) {
       scene.current = null;
     };
   }, []);
+
+  // the helix only starts moving once the opening has finished
+  useEffect(() => {
+    bootedRef.current = booted;
+    scene.current?.setHeld(!booted);
+  }, [booted]);
 
   useGSAP(
     () => {

@@ -57,7 +57,7 @@ function hiss(ctx, t, dur, dest, { type = 'highpass', freq = 2000, q = 0.7 } = {
   return f;
 }
 
-export const introSound = {
+const sounds = {
   /** The START button on the pad: a plastic click and a little confirm blip. */
   press() {
     const ctx = out();
@@ -210,3 +210,18 @@ export const introSound = {
     setTimeout(() => b.disconnect(), 400);
   },
 };
+
+// The intro's timeline calls these at set moments. A sound that fails (a browser that refuses
+// Web Audio, a node it doesn't support) must never stop the picture, so every call is guarded.
+export const introSound = Object.fromEntries(
+  Object.entries(sounds).map(([name, play]) => [
+    name,
+    (...args) => {
+      try {
+        play(...args);
+      } catch {
+        /* no sound this time; the intro carries on */
+      }
+    },
+  ]),
+);

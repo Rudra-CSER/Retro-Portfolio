@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import BoxArt from '../components/BoxArt';
 import CaseFile from '../components/CaseFile';
@@ -6,6 +6,7 @@ import { gsap, ScrollTrigger, scrollToY } from '../lib/motion';
 import { useMagnetic, useMedia } from '../lib/hooks';
 import { useStage } from '../lib/useStage';
 import { sfx } from '../lib/audio';
+import { sceneBg } from '../lib/palette';
 
 const poly = (b, mode) => {
   const m = Math.min(b, 100);
@@ -151,13 +152,21 @@ export default function Quests({ content }) {
         .fromTo(inn.querySelectorAll('.mask-inner'), { yPercent: 110 * dir }, { yPercent: 0, duration: 1.15, ease: 'elastic.out(1, 0.62)', stagger: 0.07 }, 0.3)
         .fromTo(inn.querySelectorAll('.q-fade'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, stagger: 0.06 }, 0.45)
         .fromTo(inn.querySelector('.q-ghost'), { xPercent: 10 * dir, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 0.05, duration: 1, ease: 'power3.out' }, 0.3)
-        .to(root.current, { backgroundColor: projects[next].bg, duration: 0.8, ease: 'power2.out' }, 0);
+        .to(root.current, { backgroundColor: sceneBg(projects[next].bg), duration: 0.8, ease: 'power2.out' }, 0);
       diagWipe(t, inn.querySelector('.q-art'), 'in', 0.3, 0.75);
       tl.current = t;
       sfx.blip();
     },
     [projects],
   );
+
+  // a palette change while a quest is on screen re-tints its background straight away
+  useEffect(() => {
+    if (!pinned) return undefined;
+    const onPalette = () => gsap.set(root.current, { backgroundColor: sceneBg(projects[cur.current].bg) });
+    window.addEventListener('palettechange', onPalette);
+    return () => window.removeEventListener('palettechange', onPalette);
+  }, [pinned, projects]);
 
   useGSAP(
     () => {
@@ -178,7 +187,7 @@ export default function Quests({ content }) {
       cur.current = 0;
       setActive(0);
       slides.current.forEach((s, i) => gsap.set(s, { autoAlpha: i === 0 ? 1 : 0 }));
-      gsap.set(root.current, { backgroundColor: projects[0].bg });
+      gsap.set(root.current, { backgroundColor: sceneBg(projects[0].bg) });
       st.current = ScrollTrigger.create({
         trigger: root.current,
         start: 'top top',

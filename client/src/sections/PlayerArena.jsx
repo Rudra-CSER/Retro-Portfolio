@@ -8,6 +8,10 @@ import { sfx } from '../lib/audio';
 
 const N_EXPAND = 1; // timeline units spent zooming into the TV
 
+// While the TV fills the whole screen, <html> carries .tv-full so the header can switch to its
+// dark look on a light palette (styles/base.css); the TV itself is always a dark screen.
+const setTvFull = (on) => document.documentElement.classList.toggle('tv-full', on);
+
 export default function PlayerArena({ content }) {
   const root = useRef(null);
   const stage = useRef(null);
@@ -94,8 +98,12 @@ export default function PlayerArena({ content }) {
           pin: true,
           scrub: 0.6,
           invalidateOnRefresh: true,
+          onToggle: (self) => {
+            if (!self.isActive) setTvFull(false);
+          },
           onUpdate: (self) => {
             const t = self.progress * (total + 0.6);
+            setTvFull(self.isActive && t >= N_EXPAND * 0.85);
             if (t < N_EXPAND * 0.92) return setActive(-1, 0);
             const s = Math.min(n - 0.0001, Math.max(0, t - N_EXPAND));
             const idx = Math.floor(s);
@@ -114,6 +122,7 @@ export default function PlayerArena({ content }) {
         .fromTo(st.querySelectorAll('.tv-osd-expanded'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25 }, N_EXPAND * 0.8)
         .set({}, {}, total + 0.6); // timeline length == scroll length, so progress maps 1:1
       trig.current = { st: tl.scrollTrigger, total: total + 0.6 };
+      return () => setTvFull(false);
     },
     { scope: root },
   );

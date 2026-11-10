@@ -7,6 +7,7 @@ let noiseBuf = null;
 let enabled = false;
 let crowd = null;
 let unlocked = false;
+let broken = false; // the browser refused to make an audio context: stay silent, never retry in a loop
 
 // Browsers only let audio start inside a real gesture (a tap's touchend, a mouse
 // press, a key). A touch pointerdown or a scroll doesn't count, so we wait for one.
@@ -33,22 +34,38 @@ export const audioContext = () => ensure();
 export const audioNoise = () => (ensure(), noiseBuf);
 
 function ensure() {
-  if (!unlocked) return null;
+  if (!unlocked || broken) return null;
   if (!ctx) {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
-    ctx = new AC();
-    master = ctx.createGain();
-    master.gain.value = 0.16;
-    master.connect(ctx.destination);
-    noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 1.5, ctx.sampleRate);
-    const d = noiseBuf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    try {
+      const c = new AC();
+      const m = c.createGain();
+      m.gain.value = 0.16;
+      m.connect(c.destination);
+      const buf = c.createBuffer(1, c.sampleRate * 1.5, c.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      ctx = c;
+      master = m;
+      noiseBuf = buf;
+    } catch {
+      // some browsers and privacy settings refuse Web Audio: the site simply plays silent
+      broken = true;
+      return null;
+    }
   }
   // suspended (or 'interrupted' on iOS after a call): only a gesture can wake it
-  if (ctx.state !== 'running' && ctx.state !== 'closed' && inGesture()) ctx.resume().catch(() => {});
+  try {
+    if (ctx.state !== 'running' && ctx.state !== 'closed' && inGesture()) ctx.resume().catch(() => {});
+  } catch {
+    /* resume not allowed right now */
+  }
   return ctx;
 }
+
+/** 'running' · 'suspended' · 'blocked' · 'not started' (for the ?debug=1 panel) */
+export const audioState = () => (broken ? 'blocked' : ctx ? ctx.state : 'not started');
 
 export function setSoundEnabled(on) {
   enabled = !!on;

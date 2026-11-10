@@ -13,6 +13,9 @@ football game with a global leaderboard.
 
 - **The opening.** A small software renderer (no WebGL) draws PS1-style low-poly 3D: vertices that
   snap to whole pixels, dithered 15-bit colour, depth fog and textures without perspective correction.
+  It times its own frames and, on a slower device, steps down by itself to a lighter version (a lower
+  resolution, or just the TV picture), so every visitor gets an opening that plays smoothly and always
+  ends in the site.
 - **An original chiptune soundtrack.** Seven songs synthesized live in the browser with the Web Audio
   API, so there are no audio files.
 - **PIXEL CUP '96.** A canvas football game with a broadcast camera, a radar and commentary. Points
@@ -20,7 +23,8 @@ football game with a global leaderboard.
 - **Phone chapter mode.** On phones the long scroll story becomes short, swipeable chapters.
 - **NO SIGNAL.** On a slow or lost connection the logotype drifts around the screen like an old TV
   screensaver, and the site picks itself back up when the connection returns.
-- A pause menu, colour palettes and a few secrets for those who look.
+- A pause menu, five colour palettes (four dark, one paper-white) one tap away in the header, and a few
+  secrets for those who look.
 
 ## How it's built
 

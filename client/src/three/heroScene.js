@@ -11,6 +11,7 @@ const DITHER_FRAG = /* glsl */ `
   uniform vec3 uMid;
   uniform vec3 uDark;
   uniform vec3 uAccent;
+  uniform float uInvert; // 1 on a light page: ink goes where the shadows are, paper where the light is
   varying vec2 vUv;
 
   float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
@@ -21,6 +22,7 @@ const DITHER_FRAG = /* glsl */ `
     if (c.a < 0.02) { gl_FragColor = vec4(0.0); return; }
     vec3 rgb = c.rgb / max(c.a, 0.001);
     float lum = pow(dot(rgb, vec3(0.299, 0.587, 0.114)), 1.0 / 2.0);
+    lum = mix(lum, 1.0 - lum, uInvert);
     float mx = max(max(rgb.r, rgb.g), rgb.b);
     float mn = min(min(rgb.r, rgb.g), rgb.b);
     float sat = mx > 0.001 ? (mx - mn) / mx : 0.0;
@@ -48,18 +50,26 @@ const hexToVec3 = (hex) => {
   return new THREE.Vector3(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 };
 
-export function readPalette() {
-  const cs = getComputedStyle(document.documentElement);
-  const get = (v, d) => (cs.getPropertyValue(v).trim() || d);
+/**
+ * The palette as seen from `el` (CSS variables inherit, so a dark device inside a light page
+ * gets its own dark set). `light` is true when the page behind `el` is light.
+ */
+export function readPalette(el = document.documentElement) {
+  const cs = getComputedStyle(el);
+  const get = (v, d) => cs.getPropertyValue(v).trim() || d;
   return {
     ink: get('--text', '#F2EEE6'),
     mid: get('--muted', '#8C8981'),
     dark: get('--bg-3', '#1A1A1A'),
     accent: get('--accent', '#FFB627'),
+    red: get('--p2', '#FF3B5C'),
+    light: cs.getPropertyValue('color-scheme').trim() === 'light',
   };
 }
 
-export function createHeroScene(container, { pixel = 3 } = {}) {
+// `held`: while the opening plays on top of the page, the helix draws one still frame and waits.
+// Its render loop would otherwise run unseen under the intro and take frames away from it.
+export function createHeroScene(container, { pixel = 3, held = false } = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(1);
   renderer.setClearColor(0x000000, 0);
@@ -185,6 +195,7 @@ export function createHeroScene(container, { pixel = 3 } = {}) {
       uMid: { value: hexToVec3(pal.mid) },
       uDark: { value: hexToVec3(pal.dark) },
       uAccent: { value: hexToVec3(pal.accent) },
+      uInvert: { value: pal.light ? 1 : 0 },
     },
     vertexShader: DITHER_VERT,
     fragmentShader: DITHER_FRAG,
@@ -200,6 +211,7 @@ export function createHeroScene(container, { pixel = 3 } = {}) {
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
   let progress = 0;
   let running = false;
+  let hold = held;
   let raf = 0;
   let last = performance.now();
   let t = 0;
@@ -280,7 +292,7 @@ export function createHeroScene(container, { pixel = 3 } = {}) {
   }
 
   function start() {
-    if (running) return;
+    if (running || hold) return;
     running = true;
     last = performance.now();
     raf = requestAnimationFrame(loop);
@@ -300,6 +312,7 @@ export function createHeroScene(container, { pixel = 3 } = {}) {
     ditherMat.uniforms.uMid.value = hexToVec3(p.mid);
     ditherMat.uniforms.uDark.value = hexToVec3(p.dark);
     ditherMat.uniforms.uAccent.value = hexToVec3(p.accent);
+    ditherMat.uniforms.uInvert.value = p.light ? 1 : 0;
     if (!running) render();
   };
   const ro = new ResizeObserver(() => {
@@ -326,6 +339,12 @@ export function createHeroScene(container, { pixel = 3 } = {}) {
   return {
     setProgress(p) {
       progress = p;
+    },
+    /** Hold the animation (a still frame stays on screen) or let it run again. */
+    setHeld(h) {
+      hold = !!h;
+      if (hold) stop();
+      else if (inView && !document.hidden) start();
     },
     renderStill() {
       update(0.016);

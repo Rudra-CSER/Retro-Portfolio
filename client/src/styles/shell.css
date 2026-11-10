@@ -149,6 +149,17 @@ html.cheat-flash body {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
+/* simple version (intro/quality.js): just the TV set, drawn at its own small size and scaled up
+   to about two thirds of the screen; the engine zooms it with a transform for the dive */
+.boot.tier-simple .boot-canvas {
+  top: 13%;
+  bottom: 15%;
+  left: 6%;
+  right: 6%;
+  width: 88%;
+  height: 72%;
+  object-fit: contain;
+}
 /* the tube's curvature: darker corners over the low-res picture */
 .boot::after {
   content: '';
@@ -252,6 +263,63 @@ html.cheat-flash body {
 .boot.is-open .boot-hit {
   display: none;
 }
+/* LITE MODE: the device picked a lighter intro by itself (intro/quality.js). Shown like a TV's
+   on-screen display, the same green as the NO SIGNAL screen's channel readout. */
+.boot-note {
+  position: absolute;
+  left: max(22px, env(safe-area-inset-left, 0px));
+  top: max(18px, env(safe-area-inset-top, 0px));
+  margin: 0;
+  max-width: calc(100% - 44px);
+  font-family: var(--font-term);
+  font-size: 20px;
+  letter-spacing: 0.2em;
+  color: #2fbf71;
+  text-shadow: 0 0 10px rgba(47, 191, 113, 0.45);
+  pointer-events: none;
+  animation:
+    boot-note-in 0.3s steps(3) both,
+    boot-note-out 0.3s steps(3) 2.45s forwards;
+}
+@keyframes boot-note-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes boot-note-out {
+  to {
+    opacity: 0;
+  }
+}
+@media (max-width: 520px) {
+  .boot-note {
+    font-size: 17px;
+    letter-spacing: 0.14em;
+  }
+}
+
+/* ?debug=1: what the intro decided on this device, for testing on other browsers */
+.debug-panel {
+  position: fixed;
+  left: 8px;
+  bottom: 8px;
+  z-index: 3100;
+  max-width: calc(100vw - 16px);
+  margin: 0;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.84);
+  border: 1px solid #2fbf71;
+  font-family: var(--font-term);
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: 0.06em;
+  color: #9ff0bf;
+  white-space: pre-wrap;
+  pointer-events: none;
+}
 
 /* ── load screen (content loading / no signal / crash) ──────────────────── */
 .load-screen {
@@ -310,7 +378,7 @@ html.cheat-flash body {
 .load-retry:hover,
 .crash-btn:hover {
   background: var(--accent);
-  color: #050505;
+  color: var(--on-accent);
 }
 
 /* NO SIGNAL / WEAK SIGNAL: the logotype bounces around the whole screen (components/NoSignal.jsx) */
@@ -467,7 +535,7 @@ html.cheat-flash body {
   content: '';
   position: absolute;
   inset: 0 0 -18px 0;
-  background: linear-gradient(to bottom, rgba(5, 5, 5, 0.72), rgba(5, 5, 5, 0));
+  background: linear-gradient(to bottom, rgba(var(--shade), 0.72), rgba(var(--shade), 0));
   pointer-events: none;
   z-index: -1;
 }
@@ -552,6 +620,42 @@ html.cheat-flash body {
   width: 19px;
   height: 16px;
   flex: none;
+}
+/* palette dots: one tap to switch the site's colours (PALETTE in the pause menu does the same) */
+.hud-pal {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  margin-right: 2px;
+}
+.hud-pal button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 44px;
+}
+.hud-pal i {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--sw);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--text) 28%, transparent);
+  transition:
+    transform 0.2s var(--ease-out),
+    box-shadow 0.2s;
+}
+.hud-pal button:hover i,
+.hud-pal button:focus-visible i {
+  transform: scale(1.3);
+}
+.hud-pal button.is-on i {
+  box-shadow:
+    0 0 0 2px var(--bg-0),
+    0 0 0 3.5px var(--text);
+}
+.hud-pal button:focus-visible {
+  outline-offset: -8px;
 }
 .hud-track {
   display: inline-flex;
@@ -654,8 +758,21 @@ html.cheat-flash body {
     display: none;
   }
 }
-@media (max-width: 1100px) {
+/* the right-hand group (palette dots, now playing, sound, menu) must never run into the centre
+   HUD: the song title goes first, then the chip (the pause menu still shows the track), then
+   the SOUND label (the speaker icon stays) */
+@media (max-width: 1599px) {
+  .hud-track-name {
+    display: none;
+  }
+}
+@media (max-width: 1359px) {
   .hud-track {
+    display: none;
+  }
+}
+@media (max-width: 1200px) {
+  .hud-snd-label {
     display: none;
   }
 }
@@ -786,7 +903,7 @@ html.cheat-flash body {
   height: 44px;
   padding: 0 14px 0 10px;
   background: var(--text);
-  color: #050505;
+  color: var(--on-text);
   border-radius: 999px 0 0 999px;
   transform: translate(calc(100% - 74px), -50%);
   transition: transform 0.55s var(--ease-out), opacity 0.4s;
@@ -823,7 +940,7 @@ html.cheat-flash body {
 }
 .coin-text em {
   font-style: normal;
-  color: #8a6400;
+  color: var(--coin-em);
 }
 html.quests-active .coin-tab,
 html.is-locked .coin-tab {
@@ -914,7 +1031,7 @@ html.is-locked .coin-tab {
   display: grid;
   place-items: center;
   padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
-  background: rgba(5, 5, 5, 0.86);
+  background: rgba(var(--shade), 0.86);
   overscroll-behavior: contain;
   touch-action: none;
 }
@@ -941,7 +1058,7 @@ html.is-locked .coin-tab {
   min-height: 52px;
   padding: 4px 6px 4px 16px;
   background: var(--text);
-  color: #050505;
+  color: var(--on-text);
   font-family: var(--font-term);
   font-size: 19px;
   letter-spacing: 0.16em;
@@ -962,11 +1079,11 @@ html.is-locked .coin-tab {
   font-family: var(--font-term);
   font-size: 19px;
   letter-spacing: 0.12em;
-  color: #050505;
+  color: var(--on-text);
 }
 .cf-close:hover,
 .cf-close:focus-visible {
-  background: #050505;
+  background: var(--on-text);
   color: var(--text);
   outline: none;
 }
@@ -1081,7 +1198,7 @@ html.is-locked .coin-tab {
 .cf-done:focus-visible {
   border-color: var(--text);
   background: var(--text);
-  color: #050505;
+  color: var(--on-text);
   outline: none;
 }
 @media (max-width: 640px) {

@@ -27,9 +27,12 @@ export default function CRTOverlay() {
       }
       ctx.putImageData(img, 0, 0);
     };
+    // a device running the lighter intro keeps the grain still (it costs a full-screen repaint)
+    const html = document.documentElement;
+    const calm = () => html.classList.contains('intro-lite') || html.classList.contains('lite-fx');
     const loop = (t) => {
       raf = requestAnimationFrame(loop);
-      if (t - last < 66 || document.hidden) return;
+      if (t - last < 66 || document.hidden || calm()) return;
       last = t;
       draw();
     };

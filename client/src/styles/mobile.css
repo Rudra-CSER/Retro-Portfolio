@@ -82,10 +82,10 @@ html.is-locked .m-nav {
   transition: color 0.25s;
 }
 .m-nav-row button.is-active {
-  color: #050505;
+  color: var(--on-text);
 }
 .m-nav-row button.is-active small {
-  color: rgba(5, 5, 5, 0.5);
+  color: color-mix(in srgb, var(--on-text) 50%, transparent);
 }
 .m-nav-pill {
   position: absolute;
@@ -389,7 +389,7 @@ html.m-mode .cont-left .mch-no {
 }
 .mtv-controls > button:active {
   background: var(--text);
-  color: #050505;
+  color: var(--on-text);
 }
 .mtv-dots {
   display: flex;
@@ -489,7 +489,7 @@ html.m-mode .cont-left .mch-no {
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--card-line);
   border-radius: 12px;
   background: var(--bg-1);
   overflow: hidden;
@@ -564,7 +564,7 @@ html.m-mode .cont-left .mch-no {
   padding: 9px 14px 8px;
   border-radius: 999px;
   background: var(--text);
-  color: #050505;
+  color: var(--on-text);
   font-family: var(--font-term);
   font-size: 17px;
   letter-spacing: 0.16em;
@@ -689,10 +689,10 @@ html.m-mode .cont-left .mch-no {
   color: var(--accent);
 }
 .mf-row.rank-2 .mf-rank {
-  color: #d9d6cf;
+  color: var(--silver);
 }
 .mf-row.rank-3 .mf-rank {
-  color: #cd8a4b;
+  color: var(--bronze);
 }
 .mf-more {
   justify-self: start;

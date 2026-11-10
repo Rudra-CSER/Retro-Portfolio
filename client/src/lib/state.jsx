@@ -21,8 +21,21 @@ const save = (k, v) => {
   }
 };
 
-export const PALETTES = ['arcade', 'phosphor', 'cga', 'dmg'];
-export const PALETTE_NAMES = { arcade: 'ARCADE', phosphor: 'PHOSPHOR', cga: 'CGA', dmg: 'POCKET' };
+export const PALETTES = ['arcade', 'phosphor', 'cga', 'dmg', 'white'];
+export const PALETTE_NAMES = { arcade: 'ARCADE', phosphor: 'PHOSPHOR', cga: 'CGA', dmg: 'POCKET', white: 'WHITE' };
+// the colour of each palette's dot in the header switcher (styles/base.css holds the palettes)
+export const PALETTE_SWATCHES = {
+  arcade: '#e9b250',
+  phosphor: '#39ff88',
+  cga: 'linear-gradient(135deg, #55ffff 50%, #ff55ff 50%)',
+  dmg: '#9bbc0f',
+  white: '#f7f4ee',
+};
+
+// The opening: AUTO lets the device pick its own version (intro/quality.js); the others fix it.
+// Read by intro/quality.js the next time the site opens.
+export const INTRO_MODES = ['auto', 'full', 'lite', 'off'];
+export const INTRO_NAMES = { auto: 'AUTO', full: 'FULL', lite: 'LITE', off: 'OFF' };
 
 export const ACHIEVEMENTS = {
   kickoff: 'KICK OFF',
@@ -41,6 +54,7 @@ export function GameStateProvider({ children }) {
   const [audioReady, setAudioReady] = useState(false);
   const [crt, setCrt] = useState(() => load('crt', true));
   const [palette, setPalette] = useState(() => (PALETTES.includes(load('palette', 'arcade')) ? load('palette', 'arcade') : 'arcade'));
+  const [intro, setIntro] = useState(() => (INTRO_MODES.includes(load('intro', 'auto')) ? load('intro', 'auto') : 'auto'));
   const [score, setScore] = useState(0);
   const [savedHi] = useState(() => load('hi', 0));
   const hi = Math.max(savedHi, score);
@@ -81,10 +95,16 @@ export function GameStateProvider({ children }) {
   }, [crt]);
 
   useEffect(() => {
-    document.documentElement.dataset.palette = palette;
+    const html = document.documentElement;
+    html.dataset.palette = palette;
     save('palette', palette);
+    // the browser's own bar (phones) follows the page colour
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = getComputedStyle(html).getPropertyValue('--bg-0').trim() || '#050505';
     window.dispatchEvent(new CustomEvent('palettechange', { detail: palette }));
   }, [palette]);
+
+  useEffect(() => save('intro', intro), [intro]);
 
   useEffect(() => {
     if (hi > savedHi) save('hi', hi);
@@ -127,14 +147,18 @@ export function GameStateProvider({ children }) {
     setPalette((p) => PALETTES[(PALETTES.indexOf(p) + 1) % PALETTES.length]);
   }, []);
 
+  const cycleIntro = useCallback(() => {
+    setIntro((m) => INTRO_MODES[(INTRO_MODES.indexOf(m) + 1) % INTRO_MODES.length]);
+  }, []);
+
   const nextTrack = useCallback(() => player.next(), []);
   const actions = useMemo(
-    () => ({ setSound, setMusic, nextTrack, setCrt, setPalette, cyclePalette, addScore, enterStage, setMenuOpen, toast, unlock }),
-    [nextTrack, cyclePalette, addScore, enterStage, toast, unlock],
+    () => ({ setSound, setMusic, nextTrack, setCrt, setPalette, cyclePalette, cycleIntro, addScore, enterStage, setMenuOpen, toast, unlock }),
+    [nextTrack, cyclePalette, cycleIntro, addScore, enterStage, toast, unlock],
   );
   const state = useMemo(
-    () => ({ sound, music, track, crt, palette, score, hi, stage, menuOpen, toasts }),
-    [sound, music, track, crt, palette, score, hi, stage, menuOpen, toasts],
+    () => ({ sound, music, track, crt, palette, intro, score, hi, stage, menuOpen, toasts }),
+    [sound, music, track, crt, palette, intro, score, hi, stage, menuOpen, toasts],
   );
   return (
     <ActionsCtx.Provider value={actions}>

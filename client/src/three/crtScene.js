@@ -79,10 +79,11 @@ export function createCrtScene(container) {
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
   camera.position.set(0, 0, 15);
 
-  const pal = readPalette();
+  // read from the TV's own box: the screen stays dark (with light ink) even on a light palette
+  const pal = readPalette(container);
   const colAccent = new THREE.Color(pal.accent);
   const colInk = new THREE.Color(pal.ink);
-  const colRed = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--p2').trim() || '#FF3B5C');
+  const colRed = new THREE.Color(pal.red);
   const colCyan = new THREE.Color('#3DE8FF');
 
   // starfield
@@ -189,7 +190,7 @@ export function createCrtScene(container) {
     mouse.ty = (e.clientY / innerHeight) * 2 - 1;
   };
   const onPalette = () => {
-    const p = readPalette();
+    const p = readPalette(container);
     feMat.color.set(p.accent);
     lineMat.color.set(p.ink);
   };

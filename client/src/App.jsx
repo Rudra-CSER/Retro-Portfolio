@@ -15,6 +15,7 @@ import PauseMenu from './components/PauseMenu';
 import CoinTab from './components/CoinTab';
 import Toasts from './components/Toasts';
 import Boot from './components/Boot';
+import IntroDebug from './components/IntroDebug';
 import Hero from './sections/Hero';
 import About from './sections/About';
 import PlayerArena from './sections/PlayerArena';
@@ -44,6 +45,15 @@ function Guard({ name, children }) {
     </ErrorBoundary>
   );
 }
+
+// ?debug=1 shows what the intro decided on this device (components/IntroDebug.jsx)
+const DEBUG = (() => {
+  try {
+    return new URLSearchParams(window.location.search).get('debug') === '1';
+  } catch {
+    return false;
+  }
+})();
 
 function Shell({ content: c }) {
   const [boot, setBoot] = useState(prefersReduced ? 'done' : 'booting'); // booting → revealing → done
@@ -134,7 +144,7 @@ function Shell({ content: c }) {
       )}
       <main id="main">
         <Guard name="TITLE">
-          <Hero content={c} revealed={revealed} mobile={mobile} />
+          <Hero content={c} revealed={revealed} booted={boot === 'done'} mobile={mobile} />
         </Guard>
         {mobile ? (
           <>
@@ -196,6 +206,7 @@ function Shell({ content: c }) {
       <ErrorBoundary name="cursor">
         <Cursor />
       </ErrorBoundary>
+      {DEBUG && <IntroDebug />}
       {showOffline && (
         <NoSignal
           logo={c.person.logotype}
